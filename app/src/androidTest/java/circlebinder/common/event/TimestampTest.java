@@ -1,11 +1,19 @@
 package circlebinder.common.event;
 
-import android.test.AndroidTestCase;
+import junit.framework.Assert;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import circlebinder.common.test.ParcelUtil;
 
-public final class TimestampTest extends AndroidTestCase {
+@RunWith(RobolectricTestRunner.class)
+@Config(emulateSdk = 18)
+public final class TimestampTest {
 
+    @Test
     public void testParcelable() {
         Timestamp expect = new TimestampBuilder()
                 .setDisplayName("2000-11-18")
@@ -14,11 +22,11 @@ public final class TimestampTest extends AndroidTestCase {
 
         try {
             Timestamp got = ParcelUtil.restore(expect);
-            assert expect.getDisplayName().equals(got.getDisplayName());
-            assertEquals(expect.getTimestamp(), got.getTimestamp());
+            Assert.assertEquals(expect.getDisplayName(), got.getDisplayName());
+            Assert.assertEquals(expect.getTimestamp(), got.getTimestamp());
         } catch (Exception e) {
             e.printStackTrace();
-            fail();
+            Assert.fail();
         }
 
     }

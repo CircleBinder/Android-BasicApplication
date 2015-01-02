@@ -49,13 +49,6 @@
     static ** CREATOR;
 }
 
-# For ActiveAndroid
--keep class com.activeandroid.** { *; }
--keep public class com.activeandroid.**
--keep public class * extends com.activeandroid.ActiveRecordBase
--keepattributes Column
--keepattributes Table
-
 # For picasso
 -dontwarn com.squareup.okhttp.**
 

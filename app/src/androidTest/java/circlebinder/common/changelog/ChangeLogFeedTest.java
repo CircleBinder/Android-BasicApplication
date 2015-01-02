@@ -1,11 +1,18 @@
 package circlebinder.common.changelog;
 
-import android.test.AndroidTestCase;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import circlebinder.common.test.ParcelUtil;
 
-public final class ChangeLogFeedTest extends AndroidTestCase {
+@RunWith(RobolectricTestRunner.class)
+@Config(emulateSdk = 18)
+public final class ChangeLogFeedTest {
 
+    @Test
     public void testParcelable() {
         int versionCode = 2;
         String versionName = "0.2";
@@ -20,25 +27,25 @@ public final class ChangeLogFeedTest extends AndroidTestCase {
                 title
         );
 
-        assertEquals(versionCode, feed.getVersionCode());
-        assertEquals(versionName, feed.getVersionName());
-        assertEquals(title, feed.getTitle());
-        assertEquals(type, feed.getType());
-        assertEquals(publishDate.getFormattedDate(), feed.getPublishDate().getFormattedDate());
-        assertEquals(publishDate.getTimestamp(), feed.getPublishDate().getTimestamp());
+        Assert.assertEquals(versionCode, feed.getVersionCode());
+        Assert.assertEquals(versionName, feed.getVersionName());
+        Assert.assertEquals(title, feed.getTitle());
+        Assert.assertEquals(type, feed.getType());
+        Assert.assertEquals(publishDate.getFormattedDate(), feed.getPublishDate().getFormattedDate());
+        Assert.assertEquals(publishDate.getTimestamp(), feed.getPublishDate().getTimestamp());
 
         try {
             ChangeLogFeed restoredFeed = ParcelUtil.restore(feed);
 
-            assertEquals(feed.getVersionCode(), restoredFeed.getVersionCode());
-            assertEquals(feed.getVersionName(), restoredFeed.getVersionName());
-            assertEquals(feed.getTitle(), restoredFeed.getTitle());
-            assertEquals(feed.getType(), restoredFeed.getType());
-            assertEquals(feed.getPublishDate().getFormattedDate(), restoredFeed.getPublishDate().getFormattedDate());
-            assertEquals(feed.getPublishDate().getTimestamp(), restoredFeed.getPublishDate().getTimestamp());
+            Assert.assertEquals(feed.getVersionCode(), restoredFeed.getVersionCode());
+            Assert.assertEquals(feed.getVersionName(), restoredFeed.getVersionName());
+            Assert.assertEquals(feed.getTitle(), restoredFeed.getTitle());
+            Assert.assertEquals(feed.getType(), restoredFeed.getType());
+            Assert.assertEquals(feed.getPublishDate().getFormattedDate(), restoredFeed.getPublishDate().getFormattedDate());
+            Assert.assertEquals(feed.getPublishDate().getTimestamp(), restoredFeed.getPublishDate().getTimestamp());
         } catch (Exception e) {
             e.printStackTrace();
-            fail();
+            Assert.fail();
         }
     }
 }
