@@ -2,9 +2,12 @@ package circlebinder.creation.initialize;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteTransactionListener;
 import android.text.TextUtils;
 
-import com.activeandroid.ActiveAndroid;
+import net.ichigotake.common.util.Optional;
+import net.ichigotake.sqlitehelper.SQLiteTransaction;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,14 +17,15 @@ import java.util.Map;
 
 import am.ik.ltsv4j.LTSV;
 import circlebinder.common.Legacy;
+import circlebinder.common.event.Block;
 import circlebinder.common.event.CircleBuilder;
 import circlebinder.common.event.Space;
 import circlebinder.R;
 import circlebinder.common.table.EventBlockTable;
 import circlebinder.common.event.EventBlockType;
 import circlebinder.common.table.EventBlockTableForInsert;
-import circlebinder.common.table.EventCircleTable;
 import circlebinder.common.table.EventCircleTableForInsert;
+import circlebinder.common.table.SQLite;
 
 abstract class CreationDatabaseInitialize implements Runnable, Legacy {
 
@@ -39,17 +43,27 @@ abstract class CreationDatabaseInitialize implements Runnable, Legacy {
 
     @Override
     public void run() {
-        try {
-            ActiveAndroid.beginTransaction();
-            initBlock();
-            initCircle();
-            ActiveAndroid.setTransactionSuccessful();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            ActiveAndroid.endTransaction();
-        }
+        new SQLiteTransaction(SQLite.getWritableDatabase(context)).execute(new SQLiteTransactionListener() {
+            @Override
+            public void onBegin() {
+                try {
+                    initBlock();
+                    initCircle();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 
+            @Override
+            public void onCommit() {
+
+            }
+
+            @Override
+            public void onRollback() {
+
+            }
+        });
         new LegacyAppStorage(context).setInitialized(true);
         finished();
     }
@@ -60,6 +74,8 @@ abstract class CreationDatabaseInitialize implements Runnable, Legacy {
         try {
             reader = new BufferedReader(new InputStreamReader(inputStream));
             String line;
+            SQLiteDatabase database = SQLite.getWritableDatabase(context);
+            EventBlockTable table = new EventBlockTable(context);
             while ((line = reader.readLine()) != null) {
                 Map<String, String> space = LTSV.parser().parseLine(line);
                 if (TextUtils.isEmpty(space.get("block"))) {
@@ -70,7 +86,7 @@ abstract class CreationDatabaseInitialize implements Runnable, Legacy {
                         .setName(space.get("block"))
                         .setType(EventBlockType.一般的なスタイル)
                         .build();
-                EventBlockTable.insert(block);
+                table.insert(database, block);
             }
         } finally {
             if (reader != null) {
@@ -86,6 +102,7 @@ abstract class CreationDatabaseInitialize implements Runnable, Legacy {
             reader = new BufferedReader(new InputStreamReader(inputStream));
             String line;
             CreationSpaceFactory creationSpaceFactory = new CreationSpaceFactory();
+            EventBlockTable blockTable = new EventBlockTable(context);
             while ((line = reader.readLine()) != null) {
                 Map<String, String> circle = LTSV.parser().parseLine(line);
                 String circleName = circle.get("circle_name");
@@ -97,8 +114,10 @@ abstract class CreationDatabaseInitialize implements Runnable, Legacy {
 
                 Space space = creationSpaceFactory.from(circle.get("space"));
 
+                Optional<Block> block = blockTable.get(space.getBlockName());
+                assert !block.isPresent();
                 EventCircleTableForInsert insertCircle = new EventCircleTableForInsert.Builder()
-                        .setBlockId(EventBlockTable.get(space.getBlockName()).getId())
+                        .setBlockId(block.get().getId())
                         .setChecklistId(0)
                         .setCircleName(circleName)
                         .setPenName(circle.get("pen_name"))
@@ -106,7 +125,7 @@ abstract class CreationDatabaseInitialize implements Runnable, Legacy {
                         .setSpaceNo(space.getNo())
                         .setSpaceNoSub("a".equals(space.getNoSub()) ? 0 : 1)
                         .build();
-                EventCircleTable.insert(insertCircle);
+                new SQLite(context).insert(insertCircle);
             }
         } finally {
             if (reader != null) {

@@ -15,7 +15,7 @@ import net.ichigotake.common.widget.OnItemClickEventListener;
 import circlebinder.R;
 import circlebinder.common.event.Circle;
 import circlebinder.common.app.BroadcastEvent;
-import circlebinder.common.table.EventCircleTable;
+import circlebinder.common.table.SQLite;
 
 public class ChecklistSelectorView extends FrameLayout {
 
@@ -73,7 +73,7 @@ public class ChecklistSelectorView extends FrameLayout {
             @Override
             public void onItemClick(ChecklistColor item) {
                 updateChecklistColor(item, circle);
-                EventCircleTable.setChecklist(circle, item);
+                new SQLite(getContext()).setChecklist(circle, item);
                 getContext().sendBroadcast(BroadcastEvent.createIntent());
                 selector.dismiss();
             }

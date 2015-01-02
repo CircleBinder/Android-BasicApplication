@@ -1,5 +1,9 @@
 package circlebinder.common.table;
 
+import android.text.TextUtils;
+
+import circlebinder.common.event.Circle;
+
 public final class EventCircleTableForInsert {
 
     public static class Builder {
@@ -10,6 +14,17 @@ public final class EventCircleTableForInsert {
         private String penName;
         private String homepage;
         private int checklistId;
+
+        public Builder() {}
+
+        public Builder(Circle circle) {
+            this.blockId = circle.getSpace().getBlockId();
+            this.spaceNo = circle.getSpace().getNo();
+            this.spaceNoSub = TextUtils.equals(circle.getSpace().getNoSub(), "a") ? 0 : 1;
+            this.circleName = circle.getName();
+            this.penName = circle.getPenName();
+            this.homepage = TextUtils.join("\t", circle.getLinks().toList());
+        }
 
         public EventCircleTableForInsert build() {
             return new EventCircleTableForInsert(this);

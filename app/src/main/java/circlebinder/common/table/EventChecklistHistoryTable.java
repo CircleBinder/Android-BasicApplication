@@ -1,11 +1,13 @@
 package circlebinder.common.table;
 
-import com.activeandroid.Model;
-import com.activeandroid.annotation.Column;
-import com.activeandroid.annotation.Table;
+import net.ichigotake.sqlitehelper.schema.Table;
+import net.ichigotake.sqlitehelper.schema.TableField;
+import net.ichigotake.sqlitehelper.schema.TableSchema;
 
-@Table(name = EventChecklistHistoryTable.NAME, id = EventChecklistHistoryTable.FIELD_ID)
-public final class EventChecklistHistoryTable extends Model {
+import java.util.List;
+
+// TODO: TBD
+public final class EventChecklistHistoryTable implements Table {
 
     public static final String NAME = "event_checklist_history";
     public static final String FIELD_ID = "_id";
@@ -19,32 +21,29 @@ public final class EventChecklistHistoryTable extends Model {
     public static final String FIELD_CHECKLIST_ID = "checklist_id";
     public static final String FIELD_CHECKLIST_NAME = "checklist_name";
 
-    @Column(name = FIELD_EVENT_ID)
-    public String eventId;
+    public EventChecklistHistoryTable() {
+        throw new IllegalStateException("TBD");
+    }
 
-    @Column(name = FIELD_EVENT_NAME)
-    public String eventName;
+    @Override
+    public int getSenseVersion() {
+        return 0;
+    }
 
-    @Column(name = FIELD_EVENT_NUMBER)
-    public String eventNumber;
+    @Override
+    public TableSchema getTableSchema() {
+        return null;
+    }
 
-    @Column(name = FIELD_SPACE_NAME)
-    public int spaceName;
+    @Override
+    public List<TableField> getTableFields() {
+        return null;
+    }
 
-    @Column(name = FIELD_CIRCLE_NAME)
-    public String circleName;
-
-    @Column(name = FIELD_PEN_NAME)
-    public String penName;
-
-    @Column(name = FIELD_HOMEPAGE)
-    public String homepage;
-
-    @Column(name = FIELD_CHECKLIST_ID)
-    public int checklistId;
-
-    @Column(name = FIELD_CHECKLIST_NAME)
-    public int checklistName;
+    @Override
+    public String getTableName() {
+        return NAME;
+    }
 
 }
 

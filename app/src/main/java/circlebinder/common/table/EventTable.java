@@ -1,11 +1,12 @@
 package circlebinder.common.table;
 
-import com.activeandroid.Model;
-import com.activeandroid.annotation.Column;
-import com.activeandroid.annotation.Table;
+import net.ichigotake.sqlitehelper.schema.Table;
+import net.ichigotake.sqlitehelper.schema.TableField;
+import net.ichigotake.sqlitehelper.schema.TableSchema;
 
-@Table(name = EventTable.NAME, id = EventTable.FIELD_ID)
-public final class EventTable extends Model {
+import java.util.List;
+
+public final class EventTable implements Table {
 
     public static final String NAME = "events";
     public static final String FIELD_ID = "_id";
@@ -13,17 +14,29 @@ public final class EventTable extends Model {
     public static final String FIELD_EVENT_NUMBER = "event_number";
     public static final String FIELD_EVENT_NAME = "event_name";
 
-    @Column(name = EventBlockTable.FIELD_BLOCK_TYPE_ID)
-    public int blockTypeId;
+    EventTable() {
+        throw new IllegalStateException("TBD");
+    }
 
-    @Column(name = FIELD_EVENT_ID, index = true)
-    public String eventId;
+    @Override
+    public int getSenseVersion() {
+        return 0;
+    }
 
-    @Column(name = FIELD_EVENT_NUMBER)
-    public String eventNumber;
+    @Override
+    public TableSchema getTableSchema() {
+        return null;
+    }
 
-    @Column(name = FIELD_EVENT_NAME)
-    public String eventName;
+    @Override
+    public List<TableField> getTableFields() {
+        return null;
+    }
+
+    @Override
+    public String getTableName() {
+        return null;
+    }
 
 }
 

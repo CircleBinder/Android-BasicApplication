@@ -26,7 +26,7 @@ public final class DatabaseInitializeService extends Service implements Legacy {
         }
 
         @Override
-        public void AsyncStart() throws RemoteException {
+        public void start() throws RemoteException {
             AsyncTask.execute(new CreationDatabaseInitialize(getApplicationContext()) {
                 @Override
                 void finished() {

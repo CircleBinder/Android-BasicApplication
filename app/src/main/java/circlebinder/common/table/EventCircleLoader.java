@@ -1,4 +1,4 @@
-package circlebinder.common.search;
+package circlebinder.common.table;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -6,20 +6,19 @@ import android.database.Cursor;
 import net.ichigotake.common.content.AsyncTaskLoader;
 
 import circlebinder.common.search.CircleSearchOption;
-import circlebinder.common.table.EventCircleTable;
 
-public final class CircleLoader extends AsyncTaskLoader<Cursor> {
+public final class EventCircleLoader extends AsyncTaskLoader<Cursor> {
 
     private final CircleSearchOption searchOption;
 
-    public CircleLoader(Context context, CircleSearchOption searchOption) {
+    public EventCircleLoader(Context context, CircleSearchOption searchOption) {
         super(context);
         this.searchOption = searchOption;
     }
 
     @Override
     public Cursor loadInBackground() {
-        return EventCircleTable.find(searchOption);
+        return new SQLite(getContext()).find(searchOption);
     }
 
 }

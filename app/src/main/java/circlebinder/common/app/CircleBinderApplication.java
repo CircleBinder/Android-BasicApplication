@@ -2,10 +2,11 @@ package circlebinder.common.app;
 
 
 import android.app.Application;
-
-import com.activeandroid.ActiveAndroid;
+import android.os.AsyncTask;
 
 import java.util.Locale;
+
+import circlebinder.common.table.SQLite;
 
 public class CircleBinderApplication extends Application {
 
@@ -21,14 +22,18 @@ public class CircleBinderApplication extends Application {
         super.onCreate();
         instance = this;
         CrashReporter.onStart(getApplicationContext());
-        ActiveAndroid.initialize(this);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                SQLite.getReadableDatabase(getApplicationContext());
+            }
+        });
     }
 
     @Override
     public void onTerminate() {
         instance = null;
         super.onTerminate();
-        ActiveAndroid.dispose();
     }
 
 }
