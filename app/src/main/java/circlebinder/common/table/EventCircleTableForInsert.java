@@ -85,31 +85,43 @@ public final class EventCircleTableForInsert {
         this.checklistId = builder.checklistId;
     }
 
-    long getBlockId() {
+    public long getBlockId() {
         return blockId;
     }
 
-    int getSpaceNo() {
+    public int getSpaceNo() {
         return spaceNo;
     }
 
-    int getSpaceNoSub() {
+    public int getSpaceNoSub() {
         return spaceNoSub;
     }
 
-    String getCircleName() {
+    public String getCircleName() {
         return circleName;
     }
 
-    String getPenName() {
+    public String getPenName() {
         return penName;
     }
 
-    String getHomepage() {
+    public String getHomepage() {
         return homepage;
     }
 
-    int getChecklistId() {
+    public int getChecklistId() {
         return checklistId;
     }
+    
+    @Override
+    public boolean equals(Object object) {
+        return object != null
+                && object instanceof EventCircleTableForInsert
+                && TextUtils.equals(penName, ((EventCircleTableForInsert)object).getPenName())
+                && TextUtils.equals(circleName, ((EventCircleTableForInsert)object).getCircleName())
+                && blockId == ((EventCircleTableForInsert)object).getBlockId()
+                && spaceNo == ((EventCircleTableForInsert)object).spaceNo
+                && spaceNoSub == ((EventCircleTableForInsert)object).spaceNoSub;
+    }
+    
 }

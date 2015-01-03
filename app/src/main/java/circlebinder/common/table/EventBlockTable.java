@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 
 import net.ichigotake.common.database.CursorSimple;
 import net.ichigotake.common.util.Optional;
@@ -75,50 +76,55 @@ public final class EventBlockTable implements Table {
 
     public List<Block> getAll() {
         List<Block> blocks = new CopyOnWriteArrayList<>();
-        Cursor c = new Select(SQLite.getReadableDatabase(context), new EventBlockTable(context))
+        Cursor c = new Select(SQLite.getWritableDatabase(context), new EventBlockTable(context))
                 .orderBy(new Order(Field.BLOCK_TYPE_ID, Order.Sequence.ASC))
                 .execute();
 
-        for (c.moveToFirst(); !c.isLast(); c.moveToNext()) {
+        while (c.moveToNext()) {
             Optional<Block> item = build(c);
             assert item.isPresent();
-            blocks.add(item.get());
+            for (Block value : item.asSet()) {
+                blocks.add(value);
+            }
         }
         c.close();
-
-        assert blocks.size() > 0;
 
         return blocks;
     }
 
-    public Optional<Block> get(CharSequence name) {
-        Cursor cursor = new Select(SQLite.getReadableDatabase(context), new EventBlockTable(context))
-                .where(new Where(Field.BLOCK_NAME.getFieldName(), name))
+    public Optional<Block> get(SQLiteDatabase database, CharSequence name) {
+        Cursor cursor = new Select(database, new EventBlockTable(context))
+                .where(new Where(Field.BLOCK_NAME.getFieldName() + " = ?", name))
                 .execute();
+        if (!cursor.moveToNext()) {
+            cursor.close();
+            return Optional.empty();
+        }
         Optional<Block> block = build(cursor);
         cursor.close();
         return block;
     }
 
     public Optional<Block> get(long id) {
-        Cursor cursor = new Select(SQLite.getReadableDatabase(context), new EventBlockTable(context))
-                .where(new Where(Field.ID.getFieldName(), id))
+        Cursor cursor = new Select(SQLite.getWritableDatabase(context), new EventBlockTable(context))
+                .where(new Where(Field.ID.getFieldName() + " = ?", id))
                 .execute();
+        if (!cursor.moveToNext()) {
+            cursor.close();
+            return Optional.empty();
+        }
         Optional<Block> block = build(cursor);
         cursor.close();
         return block;
     }
 
     private Optional<Block> build(Cursor cursor) {
-        if (!cursor.moveToFirst()) {
-            return Optional.empty();
-        }
         CursorSimple c = new CursorSimple(cursor);
         String blockName = c.getString(Field.BLOCK_NAME.getFieldName());
         Long blockId = c.getLong(Field.ID.getFieldName());
         Integer blockTypeId = c.getInt(Field.BLOCK_TYPE_ID.getFieldName());
 
-        assert blockName != null;
+        assert !TextUtils.isEmpty(blockName);
         assert blockId >= 0;
         assert blockTypeId >= 0;
 
@@ -136,7 +142,7 @@ public final class EventBlockTable implements Table {
 
     @Override
     public TableSchema getTableSchema() {
-        return new TableSchemaBuilder("event_blocks")
+        return new TableSchemaBuilder(getTableName())
                 .field(getTableFields())
                 .unique(Field.BLOCK_NAME)
                 .build();

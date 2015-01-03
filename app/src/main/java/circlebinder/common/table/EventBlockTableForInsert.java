@@ -32,11 +32,11 @@ public final class EventBlockTableForInsert {
         this.name = builder.name;
     }
 
-    int getTypeId() {
+    public int getTypeId() {
         return type.getTypeId();
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 }

@@ -17,7 +17,7 @@ public final class RawResources {
         this.resources = resources;
     }
 
-    public List<String> getText(int rawResourceId) throws IOException {
+    public List<String> getReadLines(int rawResourceId) throws IOException {
         InputStream inputStream = resources.openRawResource(rawResourceId);
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         String line;

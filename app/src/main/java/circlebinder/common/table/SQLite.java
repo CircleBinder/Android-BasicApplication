@@ -9,7 +9,7 @@ import android.text.TextUtils;
 
 import net.ichigotake.common.database.CursorSimple;
 import net.ichigotake.common.util.Optional;
-import net.ichigotake.sqlitehelper.SQLiteOpenHelper;
+import net.ichigotake.sqlitehelper.DatabaseHelper;
 import net.ichigotake.sqlitehelper.dml.Select;
 import net.ichigotake.sqlitehelper.dml.Where;
 
@@ -30,15 +30,22 @@ import circlebinder.common.event.GenreBuilder;
 import circlebinder.common.event.Space;
 import circlebinder.common.event.SpaceBuilder;
 import circlebinder.common.search.CircleSearchOption;
+import circlebinder.common.search.CircleSearchOptionBuilder;
 
 public class SQLite {
-
-    public static synchronized SQLiteDatabase getReadableDatabase(Context context) {
-        return new SQLiteOpenHelper(context, new SQLiteConfiguration(context)).getReadableDatabase();
+    
+    private static DatabaseHelper helper;
+    
+    public static synchronized DatabaseHelper getHelper(Context context) {
+        Context applicationContext = context.getApplicationContext();
+        if (helper == null) {
+            helper = new DatabaseHelper(applicationContext, new SQLiteConfiguration(applicationContext));
+        }
+        return helper;
     }
 
     public static synchronized SQLiteDatabase getWritableDatabase(Context context) {
-        return new SQLiteOpenHelper(context, new SQLiteConfiguration(context)).getWritableDatabase();
+        return getHelper(context).getWritableDatabase();
     }
     
     private final Context context;
@@ -47,15 +54,7 @@ public class SQLite {
         this.context = context;
     }
 
-    private synchronized SQLiteDatabase getReadableDatabase() {
-        return new SQLiteOpenHelper(context, new SQLiteConfiguration(context)).getReadableDatabase();
-    }
-
-    private synchronized SQLiteDatabase getWritableDatabase() {
-        return new SQLiteOpenHelper(context, new SQLiteConfiguration(context)).getWritableDatabase();
-    }
-
-    public void insert(EventCircleTableForInsert circle) {
+    public void insert(SQLiteDatabase database, EventCircleTableForInsert circle) {
         ContentValues values = new ContentValues();
         values.put(EventCircleTable.Field.BLOCK_ID.getFieldName(), circle.getBlockId());
         values.put(EventCircleTable.Field.CHECKLIST_ID.getFieldName(), circle.getChecklistId());
@@ -64,15 +63,14 @@ public class SQLite {
         values.put(EventCircleTable.Field.SPACE_NO.getFieldName(), circle.getSpaceNo());
         values.put(EventCircleTable.Field.SPACE_NO_SUB.getFieldName(), circle.getSpaceNoSub());
         values.put(EventCircleTable.Field.HOMEPAGE.getFieldName(), circle.getHomepage());
-        getWritableDatabase().insert(new EventCircleTable().getTableName(), null, values);
+        database.insert(new EventCircleTable().getTableName(), null, values);
     }
 
     public Optional<Circle> find(long circleId) {
-        Cursor cursor = new Select(getReadableDatabase(), new EventCircleTable())
+        Cursor cursor = new Select(getWritableDatabase(context), new EventCircleTable())
                 .where(new Where(EventCircleTable.Field.ID.getFieldName(), circleId))
                 .execute();
         Optional<Circle> circle = build(cursor);
-        //TODO
         cursor.close();
         return circle;
     }
@@ -124,13 +122,12 @@ public class SQLite {
     public Optional<Circle> findOne(CircleSearchOption searchOption) {
         Cursor cursor = find(searchOption);
         Optional<Circle> circle = build(cursor);
-        //TODO
-//        cursor.close();
+        cursor.close();
         return circle;
     }
 
     public Cursor find(CircleSearchOption searchOption) {
-        Select query = new Select(getReadableDatabase(), new EventCircleTable());
+        Select query = new Select(getWritableDatabase(context), new EventCircleTable());
         Where where = new Where();
         if (searchOption.hasKeyword()) {
             where.and(
@@ -157,7 +154,14 @@ public class SQLite {
         EventCircleTableForInsert.Builder builder = new EventCircleTableForInsert.Builder(circle);
         builder.setChecklistId(color.getId());
         SQLiteDatabase database = SQLite.getWritableDatabase(context);
-        insert(builder.build());
+        insert(database, builder.build());
     }
 
+    public Cursor findAll() {
+        return find(new CircleSearchOptionBuilder().build());
+    }
+
+    public static void destroy(Context context) {
+        getHelper(context).close();
+    }
 }

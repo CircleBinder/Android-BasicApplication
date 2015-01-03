@@ -39,7 +39,7 @@ public final class LicenseCreditListView extends ListView {
         String licenseName = getContext().getString(R.string.common_open_source_license_credit_license_apache_license_v2);
         String licenseBody = "";
         try {
-            List<String> lines = new RawResources(getResources()).getText(R.raw.common_license_apache_v2);
+            List<String> lines = new RawResources(getResources()).getReadLines(R.raw.common_license_apache_v2);
             licenseBody = TextUtils.join("\n", lines);
         } catch (IOException e) {
             e.printStackTrace();
