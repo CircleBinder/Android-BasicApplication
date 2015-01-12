@@ -31,6 +31,7 @@ import circlebinder.common.event.Circle;
 import circlebinder.common.search.CircleCursorConverter;
 import circlebinder.common.table.EventBlockTable;
 import circlebinder.common.table.EventBlockTableForInsert;
+import circlebinder.common.table.EventCircleTable;
 import circlebinder.common.table.EventCircleTableForInsert;
 import circlebinder.common.table.SQLite;
 
@@ -41,9 +42,10 @@ public class CreationDatabaseInitializerTest {
     @Test
     public void testInitialize() throws IOException {
         Context context = Robolectric.application;
+        SQLiteDatabase database = SQLite.getDatabase(context);
 
-        Assert.assertEquals(0, new EventBlockTable(context).getAll().size());
-        Assert.assertEquals(0, new SQLite(context).findAll().getCount());
+        Assert.assertEquals(0, EventBlockTable.getAll(database).size());
+        Assert.assertEquals(0, EventCircleTable.findAll(database).getCount());
 
         final List<EventBlockTableForInsert> expectedBlock = new ArrayList<>();
         // before blocks initialized
@@ -60,7 +62,6 @@ public class CreationDatabaseInitializerTest {
 
         // initialize
         {
-            SQLiteDatabase database = SQLite.getWritableDatabase(context);
             try {
                 database.beginTransaction();
                 CreationDatabaseInitializer initializer = new CreationDatabaseInitializer(context);
@@ -77,11 +78,11 @@ public class CreationDatabaseInitializerTest {
 
         // before circles initialized
         final List<EventCircleTableForInsert> expectedCircles = new ArrayList<>();
-        final Cursor gotCircleCursor = new SQLite(context).findAll();
+        final Cursor gotCircleCursor = EventCircleTable.findAll(database);
         final List<Circle> gotCircles = new ArrayList<>();
         {
             InputStream circlesInputStream = createCirclesInputStream();
-            new LTSVReader<>(circlesInputStream, new EventCircleParser(context, SQLite.getWritableDatabase(context)), new LTSVReadLineListener<EventCircleTableForInsert>() {
+            new LTSVReader<>(circlesInputStream, new EventCircleParser(SQLite.getDatabase(context)), new LTSVReadLineListener<EventCircleTableForInsert>() {
                 @Override
                 public void onLineRead(EventCircleTableForInsert item) {
                     expectedCircles.add(item);
@@ -91,7 +92,7 @@ public class CreationDatabaseInitializerTest {
         }
 
         // after blocks initialized
-        List<Block> gotBlocks = new EventBlockTable(context).getAll();
+        List<Block> gotBlocks = EventBlockTable.getAll(database);
         Assert.assertTrue(gotBlocks.size() > 0);
         Assert.assertEquals(expectedBlock.size(), gotBlocks.size());
         TupleCollections.from(expectedBlock, gotBlocks)

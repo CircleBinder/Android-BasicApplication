@@ -32,7 +32,7 @@ public final class DatabaseInitializeService extends Service implements Legacy {
                 @Override
                 public void run() {
                     new CreationDatabaseInitializer(getApplicationContext())
-                            .initialize(SQLite.getWritableDatabase(getApplicationContext()));
+                            .initialize(SQLite.getDatabase(getApplicationContext()));
                     callback();
                 }
             });

@@ -3,10 +3,12 @@ package circlebinder.common.search;
 import android.content.Context;
 import android.database.Cursor;
 
+import net.ichigotake.common.util.Optional;
 import net.ichigotake.common.widget.CursorItemConverter;
 
 import circlebinder.common.Legacy;
 import circlebinder.common.event.Circle;
+import circlebinder.common.table.EventCircleTable;
 import circlebinder.common.table.SQLite;
 
 public final class CircleCursorConverter implements CursorItemConverter<Circle>, Legacy {
@@ -18,7 +20,7 @@ public final class CircleCursorConverter implements CursorItemConverter<Circle>,
     }
 
     @Override
-    public Circle create(Cursor cursor) {
-        return new SQLite(context).build(cursor).or(null);
+    public Optional<Circle> create(Cursor cursor) {
+        return EventCircleTable.build(SQLite.getDatabase(context), cursor);
     }
 }

@@ -18,7 +18,7 @@ final class HomeCardSubscriber implements Observable.OnSubscribe<List<HomeCard>>
     @Override
     public void call(Subscriber<? super List<HomeCard>> subscriber) {
         try {
-            List<HomeCard> checklists = new ChecklistCardCallable(context).call();
+            List<HomeCard> checklists = new ChecklistCardRetriever(context).call();
             subscriber.onNext(checklists);
             subscriber.onCompleted();
         } catch (Exception e) {

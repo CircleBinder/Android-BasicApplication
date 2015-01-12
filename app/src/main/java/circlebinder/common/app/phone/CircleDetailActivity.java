@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -27,6 +28,7 @@ import circlebinder.common.event.Circle;
 import circlebinder.common.search.CircleSearchOption;
 import circlebinder.common.app.BaseActivity;
 import circlebinder.R;
+import circlebinder.common.table.EventCircleTable;
 import circlebinder.common.table.SQLite;
 import circlebinder.common.web.WebViewClient;
 import rx.Observable;
@@ -87,7 +89,8 @@ public final class CircleDetailActivity extends BaseActivity implements Legacy {
         AndroidObservable.bindActivity(this, Observable.create(new Observable.OnSubscribe<Circle>() {
             @Override
             public void call(Subscriber<? super Circle> subscriber) {
-                Optional<Circle> circle = new SQLite(getApplicationContext()).findOne(searchOption);
+                Optional<Circle> circle = EventCircleTable
+                        .findOne(SQLite.getDatabase(getApplicationContext()), searchOption);
                 if (circle.isPresent()) {
                     subscriber.onNext(circle.get());
                 } else {
@@ -100,18 +103,19 @@ public final class CircleDetailActivity extends BaseActivity implements Legacy {
                 .subscribe(new Observer<Circle>() {
                     @Override
                     public void onCompleted() {
-                        webView.setCircle(circle);
-                        postEvent();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        Log.d("CircleDetail", "", e);
                     }
 
                     @Override
                     public void onNext(Circle circle) {
-
+                        Log.d("CircleDetail", "cirlce " + circle.getName());
+                        CircleDetailActivity.this.circle = circle;
+                        webView.setCircle(circle);
+                        postEvent();
                     }
                 });
     }
@@ -142,7 +146,12 @@ public final class CircleDetailActivity extends BaseActivity implements Legacy {
         presenter.setActionProvider(reloadItem, new ReloadActionProvider(this, webView));
         presenter.setShowAsAction(reloadItem, MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
         MenuItem selectorItem = presenter.inflate(R.menu.checklist_selector, R.id.menu_checklist_selector);
-        presenter.setActionProvider(selectorItem, new ChecklistSelectActionProvider(this, circle));
+        if (circle != null) {
+            selectorItem.setVisible(true);
+            presenter.setActionProvider(selectorItem, new ChecklistSelectActionProvider(this, circle));
+        } else {
+            selectorItem.setVisible(false);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -164,7 +173,7 @@ public final class CircleDetailActivity extends BaseActivity implements Legacy {
         invalidateOptionsMenu();
     }
 
-     private void postEvent() {
+    private void postEvent() {
         onCirclePageChanged(circle);
     }
 

@@ -1,7 +1,6 @@
 package circlebinder.common.table;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
@@ -60,23 +59,16 @@ public final class EventBlockTable implements Table {
         }
     }
     
-    private final Context context;
-
-    public EventBlockTable(Context context) {
-        this.context = context;
-    }
-
-    public void insert(SQLiteDatabase database, EventBlockTableForInsert block) {
-        EventBlockTable table = new EventBlockTable(context);
+    public static void insert(SQLiteDatabase database, EventBlockTableForInsert block) {
         ContentValues values = new ContentValues();
         values.put(Field.BLOCK_TYPE_ID.getFieldName(), block.getTypeId());
         values.put(Field.BLOCK_NAME.getFieldName(), block.getName());
-        database.insert(table.getTableName(), null, values);
+        database.insert("event_blocks", null, values);
     }
 
-    public List<Block> getAll() {
+    public static List<Block> getAll(SQLiteDatabase database) {
         List<Block> blocks = new CopyOnWriteArrayList<>();
-        Cursor c = new Select(SQLite.getWritableDatabase(context), new EventBlockTable(context))
+        Cursor c = new Select(database, new EventBlockTable())
                 .orderBy(new Order(Field.BLOCK_TYPE_ID, Order.Sequence.ASC))
                 .execute();
 
@@ -92,8 +84,8 @@ public final class EventBlockTable implements Table {
         return blocks;
     }
 
-    public Optional<Block> get(SQLiteDatabase database, CharSequence name) {
-        Cursor cursor = new Select(database, new EventBlockTable(context))
+    public static Optional<Block> get(SQLiteDatabase database, CharSequence name) {
+        Cursor cursor = new Select(database, new EventBlockTable())
                 .where(new Where(Field.BLOCK_NAME.getFieldName() + " = ?", name))
                 .execute();
         if (!cursor.moveToNext()) {
@@ -105,8 +97,8 @@ public final class EventBlockTable implements Table {
         return block;
     }
 
-    public Optional<Block> get(long id) {
-        Cursor cursor = new Select(SQLite.getWritableDatabase(context), new EventBlockTable(context))
+    public Optional<Block> get(SQLiteDatabase database, long id) {
+        Cursor cursor = new Select(database, new EventBlockTable())
                 .where(new Where(Field.ID.getFieldName() + " = ?", id))
                 .execute();
         if (!cursor.moveToNext()) {
@@ -118,7 +110,7 @@ public final class EventBlockTable implements Table {
         return block;
     }
 
-    private Optional<Block> build(Cursor cursor) {
+    private static Optional<Block> build(Cursor cursor) {
         CursorSimple c = new CursorSimple(cursor);
         String blockName = c.getString(Field.BLOCK_NAME.getFieldName());
         Long blockId = c.getLong(Field.ID.getFieldName());

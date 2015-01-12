@@ -11,8 +11,8 @@ import circlebinder.common.event.CircleBuilder;
 import circlebinder.R;
 import circlebinder.common.table.EventBlockTable;
 import circlebinder.common.table.EventBlockTableForInsert;
+import circlebinder.common.table.EventCircleTable;
 import circlebinder.common.table.EventCircleTableForInsert;
-import circlebinder.common.table.SQLite;
 
 public class CreationDatabaseInitializer {
 
@@ -42,22 +42,21 @@ public class CreationDatabaseInitializer {
 
     /* visible for testing */
     void initializeBlocks(final SQLiteDatabase database, InputStream inputStream) throws IOException {
-        final EventBlockTable table = new EventBlockTable(context);
         new LTSVReader<>(inputStream, new EventBlockParser(), new LTSVReadLineListener<EventBlockTableForInsert>() {
             @Override
             public void onLineRead(EventBlockTableForInsert item) {
-                table.insert(database, item);
+                EventBlockTable.insert(database, item);
             }
         }).read();
     }
 
     /* visible for testing */
     void initializeCircles(final SQLiteDatabase database, InputStream inputStream) throws IOException {
-        new LTSVReader<>(inputStream, new EventCircleParser(context, database), new LTSVReadLineListener<EventCircleTableForInsert>() {
+        new LTSVReader<>(inputStream, new EventCircleParser(database), new LTSVReadLineListener<EventCircleTableForInsert>() {
             @Override
             public void onLineRead(EventCircleTableForInsert item) {
                 builder.clear();
-                new SQLite(context).insert(database, item);
+                EventCircleTable.insert(database, item);
             }
         }).read();
     }

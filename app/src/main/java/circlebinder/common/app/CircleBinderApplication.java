@@ -25,7 +25,7 @@ public class CircleBinderApplication extends Application {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                SQLite.getWritableDatabase(getApplicationContext());
+                SQLite.getDatabase(getApplicationContext());
             }
         });
     }

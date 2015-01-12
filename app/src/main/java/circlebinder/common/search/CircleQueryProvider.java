@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.widget.FilterQueryProvider;
 
+import circlebinder.common.table.EventCircleTable;
 import circlebinder.common.table.SQLite;
 
 public final class CircleQueryProvider implements FilterQueryProvider {
@@ -18,7 +19,7 @@ public final class CircleQueryProvider implements FilterQueryProvider {
 
     @Override
     public Cursor runQuery(CharSequence constraint) {
-        return new SQLite(context).find(circleSearchOption);
+        return EventCircleTable.find(SQLite.getDatabase(context), circleSearchOption);
     }
 
 }

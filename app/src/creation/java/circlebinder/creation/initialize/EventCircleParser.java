@@ -1,6 +1,5 @@
 package circlebinder.creation.initialize;
 
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
@@ -15,12 +14,10 @@ import circlebinder.common.table.EventCircleTableForInsert;
 
 class EventCircleParser implements LTSVParser<EventCircleTableForInsert> {
 
-    private final EventBlockTable blockTable;
     private final CreationSpaceFactory creationSpaceFactory;
     private final SQLiteDatabase database;
 
-    EventCircleParser(Context context, SQLiteDatabase database) {
-        this.blockTable = new EventBlockTable(context);
+    EventCircleParser(SQLiteDatabase database) {
         this.creationSpaceFactory = new CreationSpaceFactory();
         this.database = database;
     }
@@ -32,7 +29,7 @@ class EventCircleParser implements LTSVParser<EventCircleTableForInsert> {
                     return Optional.empty();
                 }
                 Space space = creationSpaceFactory.from(line.get("space"));
-                Optional<Block> block = blockTable.get(database, space.getBlockName());
+                Optional<Block> block = EventBlockTable.get(database, space.getBlockName());
                 assert block.isPresent();
                 return Optional.of(new EventCircleTableForInsert.Builder()
                         .setBlockId(block.get().getId())
