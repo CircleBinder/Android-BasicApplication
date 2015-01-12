@@ -46,6 +46,7 @@ public final class LicenseCreditListView extends ListView {
         }
         adapter.add(new LicenseCredit("ActiveAndroid", "Michael Pardo", 2010, licenseName, licenseBody));
         adapter.add(new LicenseCredit("android-intents", "Dmitriy Tarasov ", 2013, licenseName, licenseBody));
+        adapter.add(new LicenseCredit("android-sqlite-helper", "ichigotake", 2014, licenseName, licenseBody));
         adapter.add(new LicenseCredit("ltsv4j", "making", 2013, licenseName, licenseBody));
         adapter.add(new LicenseCredit("flow", "Square, Inc.", 2013, licenseName, licenseBody));
         adapter.add(new LicenseCredit("ProgressMenuItem", "Shintaro Katafuchi", 2014, licenseName, licenseBody));
