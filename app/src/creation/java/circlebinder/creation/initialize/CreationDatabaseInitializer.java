@@ -29,8 +29,8 @@ public class CreationDatabaseInitializer {
     public void initialize(SQLiteDatabase database) {
         database.beginTransaction();
         try {
-            initializeBlocks(database, resources.openRawResource(R.raw.creation_spaces));
-            initializeCircles(database, resources.openRawResource(R.raw.creation_circles));
+            initializeBlocks(database, resources.openRawResource(R.raw.creation_spaces_ltsv));
+            initializeCircles(database, resources.openRawResource(R.raw.creation_circles_ltsv));
             database.setTransactionSuccessful();
         } catch (IOException e) {
             e.printStackTrace();
