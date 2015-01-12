@@ -23,7 +23,7 @@ public class SQLiteConfiguration implements Configuration {
 
     @Override
     public int getDatabaseVersion() {
-        return 13;
+        return 14;
     }
 
     @Override
