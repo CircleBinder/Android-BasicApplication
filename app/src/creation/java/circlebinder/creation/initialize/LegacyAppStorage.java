@@ -25,5 +25,9 @@ public final class LegacyAppStorage {
                 .putBoolean(context.getString(R.string.app_pref_app_storage_is_initialize), complete)
                 .apply();
     }
-
+    
+    void reset() {
+        pref.edit().clear().apply();
+    }
+    
 }
