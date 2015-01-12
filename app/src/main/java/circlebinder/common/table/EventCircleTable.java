@@ -1,137 +1,208 @@
 package circlebinder.common.table;
 
+import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.text.TextUtils;
 
-import com.activeandroid.Cache;
-import com.activeandroid.Model;
-import com.activeandroid.annotation.Column;
-import com.activeandroid.annotation.Table;
-import com.activeandroid.query.From;
-import com.activeandroid.query.Select;
+import net.ichigotake.common.database.CursorSimple;
+import net.ichigotake.common.util.Optional;
+import net.ichigotake.sqlitehelper.dml.Select;
+import net.ichigotake.sqlitehelper.dml.Where;
+import net.ichigotake.sqlitehelper.schema.FieldAttribute;
+import net.ichigotake.sqlitehelper.schema.Table;
+import net.ichigotake.sqlitehelper.schema.TableField;
+import net.ichigotake.sqlitehelper.schema.TableFieldType;
+import net.ichigotake.sqlitehelper.schema.TableSchema;
+import net.ichigotake.sqlitehelper.schema.TableSchemaBuilder;
 
-import net.ichigotake.common.database.ConditionQueryBuilder;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+import circlebinder.R;
+import circlebinder.common.app.CircleBinderApplication;
 import circlebinder.common.checklist.ChecklistColor;
+import circlebinder.common.event.Block;
 import circlebinder.common.event.Circle;
-import circlebinder.common.search.CircleOrder;
+import circlebinder.common.event.CircleBuilder;
+import circlebinder.common.event.CircleLink;
+import circlebinder.common.event.CircleLinkBuilder;
+import circlebinder.common.event.CircleLinkType;
+import circlebinder.common.event.CircleLinks;
+import circlebinder.common.event.GenreBuilder;
+import circlebinder.common.event.Space;
+import circlebinder.common.event.SpaceBuilder;
 import circlebinder.common.search.CircleSearchOption;
-import circlebinder.common.search.Order;
+import circlebinder.common.search.CircleSearchOptionBuilder;
 
-@Table(name = EventCircleTable.NAME, id = EventCircleTable.FIELD_ID)
-public final class EventCircleTable extends Model {
+public final class EventCircleTable implements Table {
 
-    public static final String NAME = "event_circles";
-    public static final String FIELD_ID = "_id";
-    public static final String FIELD_BLOCK_ID = "block_id";
-    public static final String FIELD_SPACE_NO = "space_no";
-    public static final String FIELD_SPACE_NO_SUB = "space_no_sub";
-    public static final String FIELD_CIRCLE_NAME = "circle_name";
-    public static final String FIELD_PEN_NAME = "pen_name";
-    public static final String FIELD_HOMEPAGE = "homepage";
-    public static final String FIELD_CHECKLIST_ID = "checklist_id";
-
-    @Column(name = FIELD_BLOCK_ID)
-    public long blockId;
-
-    @Column(name = FIELD_SPACE_NO)
-    public int spaceNo;
-
-    @Column(name = FIELD_SPACE_NO_SUB)
-    public int spaceNoSub;
-
-    @Column(name = FIELD_CIRCLE_NAME)
-    public String circleName;
-
-    @Column(name = FIELD_PEN_NAME)
-    public String penName;
-
-    @Column(name = FIELD_HOMEPAGE)
-    public String homepage;
-
-    @Column(name = FIELD_CHECKLIST_ID)
-    public int checklistId;
-
-    public static void insert(EventCircleTableForInsert circle) {
-        EventCircleTable circleTable = new EventCircleTable();
-        circleTable.blockId = circle.getBlockId();
-        circleTable.checklistId = circle.getChecklistId();
-        circleTable.circleName = circle.getCircleName();
-        circleTable.penName = circle.getPenName();
-        circleTable.homepage = circle.getHomepage();
-        circleTable.spaceNo = circle.getSpaceNo();
-        circleTable.spaceNoSub = circle.getSpaceNoSub();
-        circleTable.save();
+    public static long insert(SQLiteDatabase database, EventCircleTableForInsert circle) {
+        ContentValues values = new ContentValues();
+        values.put(EventCircleTable.Field.BLOCK_ID.getFieldName(), circle.getBlockId());
+        values.put(EventCircleTable.Field.CHECKLIST_ID.getFieldName(), circle.getChecklistId());
+        values.put(EventCircleTable.Field.CIRCLE_NAME.getFieldName(), circle.getCircleName());
+        values.put(EventCircleTable.Field.PEN_NAME.getFieldName(), circle.getPenName());
+        values.put(EventCircleTable.Field.SPACE_NO.getFieldName(), circle.getSpaceNo());
+        values.put(EventCircleTable.Field.SPACE_NO_SUB.getFieldName(), circle.getSpaceNoSub());
+        values.put(EventCircleTable.Field.HOMEPAGE.getFieldName(), circle.getHomepage());
+        return database.insert(new EventCircleTable().getTableName(), null, values);
     }
 
-    public static EventCircleTable find(long circleId) {
-        return new Select("*")
-                .from(EventCircleTable.class)
-                .where(String.format("%s = ?", EventCircleTable.FIELD_ID), circleId)
-                .executeSingle();
+    public static Optional<Circle> build(SQLiteDatabase database, Cursor cursor) {
+        CursorSimple c = new CursorSimple(cursor);
+        Optional<Block> block = new EventBlockTable()
+                .get(database, c.getLong(EventCircleTable.Field.BLOCK_ID.getFieldName()));
+        assert block.isPresent();
+
+        int spaceNo = c.getInt(EventCircleTable.Field.SPACE_NO.getFieldName());
+        String spaceNoSub = Space.parseNoSub(c.getInt(EventCircleTable.Field.SPACE_NO_SUB.getFieldName()));
+        String spaceSimpleName = String.format(CircleBinderApplication.APP_LOCALE,
+                "%s%02d%s", block.get().getName(), spaceNo, spaceNoSub
+        );
+        String spaceName = String.format(CircleBinderApplication.APP_LOCALE,
+                "%s-%02d%s", block.get().getName(), spaceNo, spaceNoSub
+        );
+        SpaceBuilder spaceBuilder = new SpaceBuilder()
+                .setName(spaceName)
+                .setSimpleName(spaceSimpleName)
+                .setBlockName(block.get().getName())
+                .setNo(spaceNo)
+                .setNoSub(spaceNoSub);
+        String name = c.getString(EventCircleTable.Field.CIRCLE_NAME.getFieldName());
+        long circleId = c.getLong(EventCircleTable.Field.ID.getFieldName());
+        ChecklistColor checklist = ChecklistColor
+                .getById(c.getInt(EventCircleTable.Field.CHECKLIST_ID.getFieldName()));
+        List<CircleLink> linkList = new CopyOnWriteArrayList<>();
+        String homepageUrl = c.getString(EventCircleTable.Field.HOMEPAGE.getFieldName());
+        if (!TextUtils.isEmpty(homepageUrl)) {
+            CircleLink link = new CircleLinkBuilder()
+                    .setIcon(R.drawable.ic_action_attach)
+                    .setUri(Uri.parse(homepageUrl))
+                    .setType(CircleLinkType.HOMEPAGE)
+                    .build();
+            linkList.add(link);
+        }
+
+        return Optional.of(new CircleBuilder()
+                .setId(circleId)
+                .setPenName(c.getString(EventCircleTable.Field.PEN_NAME.getFieldName()))
+                .setName(name)
+                .setSpace(spaceBuilder.build())
+                .setChecklistColor(checklist)
+                .setGenre(new GenreBuilder().setName("").build())
+                .setLink(new CircleLinks(linkList))
+                .build());
     }
 
-    public static Cursor get() {
-        From query = new Select("*").from(EventCircleTable.class);
-        return Cache.openDatabase().rawQuery(query.toSql(), query.getArguments());
+    public static Cursor findAll(SQLiteDatabase database) {
+        return find(database, new CircleSearchOptionBuilder().build());
     }
 
-    public static Cursor find(CircleSearchOption searchOption) {
-        From query = new Select("*").from(EventCircleTable.class);
-        ConditionQueryBuilder where = new ConditionQueryBuilder();
+    public static Optional<Circle> findOne(SQLiteDatabase database, CircleSearchOption searchOption) {
+        Cursor cursor = find(database, searchOption);
+        if (!cursor.moveToNext()) {
+            cursor.close();
+            return Optional.empty();
+        }
+        Optional<Circle> circle = build(database, cursor);
+        cursor.close();
+        return circle;
+    }
+
+    public static Cursor find(SQLiteDatabase database, CircleSearchOption searchOption) {
+        Select query = new Select(database, new EventCircleTable());
+        Where where = new Where();
         if (searchOption.hasKeyword()) {
             where.and(
-                    ConditionQueryBuilder
-                            .where(EventCircleTable.FIELD_CIRCLE_NAME + " LIKE ?", "%" + searchOption.getKeyword() + "%")
-                            .or(EventCircleTable.FIELD_PEN_NAME + " LIKE ?", "%" + searchOption.getKeyword() + "%")
+                    new Where(EventCircleTable.Field.CIRCLE_NAME.getFieldName() + " LIKE ?", "%" + searchOption.getKeyword() + "%")
+                            .or(EventCircleTable.Field.PEN_NAME.getFieldName() + " LIKE ?", "%" + searchOption.getKeyword() + "%")
             );
         }
         if (searchOption.hasBlock() && searchOption.getBlock().getId() > 0) {
-            where.and(EventCircleTable.FIELD_BLOCK_ID + " = ?", searchOption.getBlock().getId());
+            where.and(EventCircleTable.Field.BLOCK_ID.getFieldName() + " = ?", searchOption.getBlock().getId());
         }
         if (searchOption.hasChecklist()) {
             if (ChecklistColor.isChecklist(searchOption.getChecklist())) {
-                where.and(EventCircleTable.FIELD_CHECKLIST_ID + " = ?", searchOption.getChecklist().getId());
+                where.and(EventCircleTable.Field.CHECKLIST_ID.getFieldName() + " = ?", searchOption.getChecklist().getId());
             } else {
-                where.and(EventCircleTable.FIELD_CHECKLIST_ID + " > ?", 0);
+                where.and(EventCircleTable.Field.CHECKLIST_ID.getFieldName() + " > ?", 0);
             }
         }
-        query.where(where.getQuery(), where.getArguments());
-        query.orderBy(buildOrderQuery(searchOption.getOrder()));
-        return Cache.openDatabase().rawQuery(query.toSql(), query.getArguments());
+        query.where(where);
+        return query.execute();
     }
 
-    public static void setChecklist(Circle circle, ChecklistColor color) {
-        EventCircleTable circleTable = find(circle.getId());
-        circleTable.checklistId = color.getId();
-        circleTable.save();
+    public static void setChecklist(SQLiteDatabase database, Circle circle, ChecklistColor color) {
+        EventCircleTableForInsert.Builder builder = new EventCircleTableForInsert.Builder(circle);
+        builder.setChecklistId(color.getId());
+        Where where = new Where(Field.ID.getFieldName() + " = ?", circle.getId());
+        ContentValues values = new ContentValues();
+        values.put(Field.CHECKLIST_ID.getFieldName(), color.getId());
+        database.update(NAME, values, where.getQuery(), where.getArguments());
     }
 
-    public static String buildOrderQuery(Order order) {
-        String query;
-        CircleOrder circleOrder;
+    enum Field implements TableField {
+        ID("_id", TableFieldType.INTEGER, Arrays.asList(FieldAttribute.PRIMARY_KEY)),
+        BLOCK_ID("block_id", TableFieldType.LONG, FieldAttribute.NONE()),
+        SPACE_NO("space_no", TableFieldType.INTEGER, FieldAttribute.NONE()),
+        SPACE_NO_SUB("space_no_sub", TableFieldType.INTEGER, FieldAttribute.NONE()),
+        CIRCLE_NAME("circle_name", TableFieldType.TEXT, FieldAttribute.NONE()),
+        PEN_NAME("pen_name", TableFieldType.TEXT, FieldAttribute.NONE()),
+        HOMEPAGE("homepage", TableFieldType.TEXT, FieldAttribute.NONE()),
+        CHECKLIST_ID("checklist_id", TableFieldType.LONG, FieldAttribute.NONE()),
+        ;
 
-        if (order instanceof CircleOrder) {
-            circleOrder = (CircleOrder)order;
-        } else {
-            circleOrder = CircleOrder.DEFAULT;
+        private final String name;
+        private final TableFieldType type;
+        private final List<FieldAttribute> attributes;
+
+        private Field(String name, TableFieldType type, List<FieldAttribute> attributes) {
+            this.name = name;
+            this.type = type;
+            this.attributes = attributes;
         }
 
-        switch (circleOrder) {
-            case CIRCLE_SPACE_ASC:
-                query = EventCircleTable.FIELD_SPACE_NO + " ASC, " + EventCircleTable.FIELD_ID + " ASC";
-                break;
-            case CIRCLE_NAME_ASC:
-                query = EventCircleTable.FIELD_CIRCLE_NAME + " ASC, " + EventCircleTable.FIELD_ID + " ASC";
-                break;
-            case CHECKLIST:
-                query = EventCircleTable.FIELD_CHECKLIST_ID + " ASC, " + EventCircleTable.FIELD_ID + " ASC";
-                break;
-            case DEFAULT:
-            default:
-                query =  EventCircleTable.FIELD_ID + " ASC";
-                break;
+        @Override
+        public List<FieldAttribute> getAttributes() {
+            return attributes;
         }
-        return query;
+
+        @Override
+        public String getFieldName() {
+            return name;
+        }
+
+        @Override
+        public TableFieldType getFieldType() {
+            return type;
+        }
+    }
+
+    public static final String NAME = "event_circles";
+
+    @Override
+    public int getSenseVersion() {
+        return 12;
+    }
+
+    @Override
+    public TableSchema getTableSchema() {
+        return new TableSchemaBuilder("event_circles")
+                .field(Field.values())
+                .build();
+    }
+
+    @Override
+    public List<TableField> getTableFields() {
+        return Arrays.<TableField>asList(Field.values());
+    }
+
+    @Override
+    public String getTableName() {
+        return NAME;
     }
 
 }

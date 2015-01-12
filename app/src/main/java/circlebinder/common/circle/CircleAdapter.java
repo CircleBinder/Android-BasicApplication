@@ -19,7 +19,7 @@ public final class CircleAdapter extends CursorAdapter<Circle, CircleViewHolder,
     private final Context context;
 
     public CircleAdapter(Context context) {
-        super(context, null, new CircleCursorConverter());
+        super(context, null, new CircleCursorConverter(context));
         this.context = context;
     }
 

@@ -38,7 +38,7 @@ final class CircleSearchPresenter {
 
     void setFilter(CircleSearchOption searchOption) {
         searchOptionBuilder.set(searchOption);
-        adapter.setFilterQueryProvider(new CircleQueryProvider(searchOption));
+        adapter.setFilterQueryProvider(new CircleQueryProvider(context, searchOption));
         adapter.getFilter().filter("");
     }
 

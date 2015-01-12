@@ -1,11 +1,19 @@
 package circlebinder.common.event;
 
-import android.test.AndroidTestCase;
+import junit.framework.Assert;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import circlebinder.common.test.ParcelUtil;
 
-public final class EventTest extends AndroidTestCase {
+@RunWith(RobolectricTestRunner.class)
+@Config(emulateSdk = 18)
+public final class EventTest {
 
+    @Test
     public void testParcelable() {
         Event expect = new EventBuilder()
                 .setName("イベント名")
@@ -15,12 +23,12 @@ public final class EventTest extends AndroidTestCase {
 
         try {
             Event got = ParcelUtil.restore(expect);
-            assert expect.getName().equals(got.getName());
-            assert expect.getDay().equals(got.getDay());
-            assert expect.getLocation().getDisplayName().equals(got.getLocation().getDisplayName());
+            Assert.assertEquals(expect.getName(), got.getName());
+            Assert.assertEquals(expect.getDay(), got.getDay());
+            Assert.assertEquals(expect.getLocation().getDisplayName(), got.getLocation().getDisplayName());
         } catch (Exception e) {
             e.printStackTrace();
-            fail();
+            Assert.fail();
         }
     }
 }

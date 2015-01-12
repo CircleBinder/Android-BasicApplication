@@ -107,8 +107,9 @@ public final class CircleBuilder implements Parcelable {
         return this;
     }
 
-    public void setLink(CircleLinks links) {
+    public CircleBuilder setLink(CircleLinks links) {
         this.links = links.toList();
+        return this;
     }
 
     @Override

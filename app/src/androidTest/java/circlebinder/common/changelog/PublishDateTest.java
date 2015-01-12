@@ -1,11 +1,19 @@
 package circlebinder.common.changelog;
 
-import android.test.AndroidTestCase;
+import junit.framework.Assert;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import circlebinder.common.test.ParcelUtil;
 
-public final class PublishDateTest extends AndroidTestCase {
+@RunWith(RobolectricTestRunner.class)
+@Config(emulateSdk = 18)
+public final class PublishDateTest {
 
+    @Test
     public void testParselable() {
         PublishDate expect = new PublishDate.Builder()
                 .setFormattedDate("2013-04-05")
@@ -14,11 +22,11 @@ public final class PublishDateTest extends AndroidTestCase {
 
         try {
             PublishDate got = ParcelUtil.restore(expect);
-            assertEquals(expect.getFormattedDate(), got.getFormattedDate());
-            assertEquals(expect.getTimestamp(), got.getTimestamp());
+            Assert.assertEquals(expect.getFormattedDate(), got.getFormattedDate());
+            Assert.assertEquals(expect.getTimestamp(), got.getTimestamp());
         } catch (Exception e) {
             e.printStackTrace();
-            fail(e.getMessage());
+            Assert.fail(e.getMessage());
         }
     }
 }

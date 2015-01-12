@@ -46,7 +46,7 @@ public final class DatabaseInitializeActivity extends BaseActivity
             mService = IInitializeBindService.Stub.asInterface(service);
             try {
                 mService.setObserver(callback);
-                mService.AsyncStart();
+                mService.start();
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

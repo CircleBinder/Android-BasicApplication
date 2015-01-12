@@ -27,13 +27,15 @@ public abstract class CursorAdapter<ITEM, TAG, HEADER_TAG> extends android.widge
     @Override
     public ITEM getItem(int position) {
         Cursor cursor = (Cursor)super.getItem(position);
-        return cursor != null ? converter.create(cursor) : null;
+        ///TODO: check to presented
+        return converter.create(cursor).get();
     }
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         int position = cursor.getPosition();
-        ITEM item = converter.create(cursor);
+        ///TODO: check to presented
+        ITEM item = converter.create(cursor).get();
         View itemView = generateView(position, item, inflater, parent);
         itemView.setTag(generateTag(position, item, itemView));
         return itemView;
@@ -42,7 +44,8 @@ public abstract class CursorAdapter<ITEM, TAG, HEADER_TAG> extends android.widge
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         @SuppressWarnings("unchecked") TAG tag = (TAG)view.getTag();
-        ITEM item = converter.create(cursor);
+        ///TODO: check to presented
+        ITEM item = converter.create(cursor).get();
         int position = cursor.getPosition();
         bindView(position, item, tag);
     }

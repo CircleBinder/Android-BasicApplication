@@ -3,6 +3,8 @@ package circlebinder.common.search;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import net.ichigotake.sqlitehelper.dml.Order;
+
 import circlebinder.common.checklist.ChecklistColor;
 import circlebinder.common.event.Block;
 import circlebinder.common.event.BlockBuilder;
@@ -66,7 +68,7 @@ public final class CircleSearchOptionBuilder implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.keyword);
-        dest.writeSerializable(this.order);
+        dest.writeParcelable(this.order, 0);
         dest.writeParcelable(this.block, 0);
         dest.writeInt(this.checklistColor == null ? -1 : this.checklistColor.ordinal());
     }

@@ -8,6 +8,7 @@ import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 
 import circlebinder.common.Legacy;
+import circlebinder.common.table.SQLite;
 
 public final class DatabaseInitializeService extends Service implements Legacy {
 
@@ -26,10 +27,12 @@ public final class DatabaseInitializeService extends Service implements Legacy {
         }
 
         @Override
-        public void AsyncStart() throws RemoteException {
-            AsyncTask.execute(new CreationDatabaseInitialize(getApplicationContext()) {
+        public void start() throws RemoteException {
+            AsyncTask.execute(new Runnable() {
                 @Override
-                void finished() {
+                public void run() {
+                    new CreationDatabaseInitializer(getApplicationContext())
+                            .initialize(SQLite.getDatabase(getApplicationContext()));
                     callback();
                 }
             });

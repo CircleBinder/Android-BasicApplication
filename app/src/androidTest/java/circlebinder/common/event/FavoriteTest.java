@@ -1,12 +1,20 @@
 package circlebinder.common.event;
 
-import android.test.AndroidTestCase;
+import junit.framework.Assert;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import circlebinder.common.checklist.ChecklistColor;
 import circlebinder.common.test.ParcelUtil;
 
-public final class FavoriteTest extends AndroidTestCase {
+@RunWith(RobolectricTestRunner.class)
+@Config(emulateSdk = 18)
+public final class FavoriteTest {
     
+    @Test
     public void testParcelable() {
         Favorite expect = new FavoriteBuilder()
                 .setChecklistColor(ChecklistColor.LIGHT_BLUE)
@@ -15,11 +23,11 @@ public final class FavoriteTest extends AndroidTestCase {
 
         try {
             Favorite got = ParcelUtil.restore(expect);
-            assert expect.getChecklist() == got.getChecklist();
-            assert expect.getCircle().getName().equals(got.getCircle().getName());
+            Assert.assertEquals(expect.getChecklist(), got.getChecklist());
+            Assert.assertEquals(expect.getCircle().getName(), got.getCircle().getName());
         } catch (Exception e) {
             e.printStackTrace();
-            fail();
+            Assert.fail();
         }
     }
 }

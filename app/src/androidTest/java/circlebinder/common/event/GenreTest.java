@@ -1,11 +1,19 @@
 package circlebinder.common.event;
 
-import android.test.AndroidTestCase;
+import junit.framework.Assert;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import circlebinder.common.test.ParcelUtil;
 
-public final class GenreTest extends AndroidTestCase {
+@RunWith(RobolectricTestRunner.class)
+@Config(emulateSdk = 18)
+public final class GenreTest {
 
+    @Test
     public void testParcel() {
         Genre expect = new GenreBuilder()
                 .setId(653115)
@@ -14,11 +22,11 @@ public final class GenreTest extends AndroidTestCase {
 
         try {
             Genre got = ParcelUtil.restore(expect);
-            assert expect.getId() == got.getId();
-            assert expect.getName().equals(got.getName());
+            Assert.assertEquals(expect.getId(), got.getId());
+            Assert.assertEquals(expect.getName(), got.getName());
         } catch (Exception e) {
             e.printStackTrace();
-            fail();
+            Assert.fail();
         }
     }
 }

@@ -41,7 +41,7 @@ public final class CreationLocationCard implements HomeCard{
     public Intent createTransitIntent(Context context) {
         try {
             String eventMapGeoUrl = new RawResources(context.getResources())
-                    .getText(R.raw.event_map_geo_url).get(0);
+                    .getReadLines(R.raw.event_map_geo_url).get(0);
             return IntentUtils.openLink(eventMapGeoUrl);
         } catch (IOException e) {
             e.printStackTrace();

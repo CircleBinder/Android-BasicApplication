@@ -1,11 +1,19 @@
 package circlebinder.common.event;
 
-import android.test.AndroidTestCase;
+import junit.framework.Assert;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import circlebinder.common.test.ParcelUtil;
 
-public final class LocationTest extends AndroidTestCase {
+@RunWith(RobolectricTestRunner.class)
+@Config(emulateSdk = 18)
+public final class LocationTest {
 
+    @Test
     public void testParcelable() {
         Location expect = new LocationBuilder()
                 .setDisplayName("大田区")
@@ -14,11 +22,11 @@ public final class LocationTest extends AndroidTestCase {
 
         try {
             Location got = ParcelUtil.restore(expect);
-            assert expect.getDisplayName().equals(got.getDisplayName());
-            assert expect.getLink().equals(got.getLink());
+            Assert.assertEquals(expect.getDisplayName(), got.getDisplayName());
+            Assert.assertEquals(expect.getLink(), got.getLink());
         } catch (Exception e) {
             e.printStackTrace();
-            fail();
+            Assert.fail();
         }
     }
 }

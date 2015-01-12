@@ -1,5 +1,9 @@
 package circlebinder.common.table;
 
+import android.text.TextUtils;
+
+import circlebinder.common.event.Circle;
+
 public final class EventCircleTableForInsert {
 
     public static class Builder {
@@ -10,6 +14,17 @@ public final class EventCircleTableForInsert {
         private String penName;
         private String homepage;
         private int checklistId;
+
+        public Builder() {}
+
+        public Builder(Circle circle) {
+            this.blockId = circle.getSpace().getBlockId();
+            this.spaceNo = circle.getSpace().getNo();
+            this.spaceNoSub = TextUtils.equals(circle.getSpace().getNoSub(), "a") ? 0 : 1;
+            this.circleName = circle.getName();
+            this.penName = circle.getPenName();
+            this.homepage = TextUtils.join("\t", circle.getLinks().toList());
+        }
 
         public EventCircleTableForInsert build() {
             return new EventCircleTableForInsert(this);
@@ -70,31 +85,43 @@ public final class EventCircleTableForInsert {
         this.checklistId = builder.checklistId;
     }
 
-    long getBlockId() {
+    public long getBlockId() {
         return blockId;
     }
 
-    int getSpaceNo() {
+    public int getSpaceNo() {
         return spaceNo;
     }
 
-    int getSpaceNoSub() {
+    public int getSpaceNoSub() {
         return spaceNoSub;
     }
 
-    String getCircleName() {
+    public String getCircleName() {
         return circleName;
     }
 
-    String getPenName() {
+    public String getPenName() {
         return penName;
     }
 
-    String getHomepage() {
+    public String getHomepage() {
         return homepage;
     }
 
-    int getChecklistId() {
+    public int getChecklistId() {
         return checklistId;
     }
+    
+    @Override
+    public boolean equals(Object object) {
+        return object != null
+                && object instanceof EventCircleTableForInsert
+                && TextUtils.equals(penName, ((EventCircleTableForInsert)object).getPenName())
+                && TextUtils.equals(circleName, ((EventCircleTableForInsert)object).getCircleName())
+                && blockId == ((EventCircleTableForInsert)object).getBlockId()
+                && spaceNo == ((EventCircleTableForInsert)object).spaceNo
+                && spaceNoSub == ((EventCircleTableForInsert)object).spaceNoSub;
+    }
+    
 }

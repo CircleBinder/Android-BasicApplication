@@ -1,13 +1,22 @@
 package circlebinder.common.event;
 
 import android.net.Uri;
-import android.test.AndroidTestCase;
+
+import junit.framework.Assert;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import circlebinder.common.checklist.ChecklistColor;
 import circlebinder.common.test.ParcelUtil;
 
-public final class CircleTest extends AndroidTestCase {
+@RunWith(RobolectricTestRunner.class)
+@Config(emulateSdk = 18)
+public final class CircleTest {
 
+    @Test
     public void testParcel() {
         Circle expect = new CircleBuilder()
                 .setId(653115)
@@ -21,16 +30,16 @@ public final class CircleTest extends AndroidTestCase {
 
         try {
             Circle got = ParcelUtil.restore(expect);
-            assert expect.getId() == got.getId();
-            assert expect.getName().equals(got.getName());
-            assert expect.getPenName().equals(got.getPenName());
-            assert expect.getChecklistColor() == got.getChecklistColor();
-            assert expect.getGenre().getName().equals(got.getGenre().getName());
-            assert expect.getSpace().getName().equals(got.getSpace().getName());
-            assert expect.getLinks().equals(got.getLinks());
+            Assert.assertEquals(expect.getId(), got.getId());
+            Assert.assertEquals(expect.getName(), got.getName());
+            Assert.assertEquals(expect.getPenName(), got.getPenName());
+            Assert.assertEquals(expect.getChecklistColor(), got.getChecklistColor());
+            Assert.assertEquals(expect.getGenre().getName(), got.getGenre().getName());
+            Assert.assertEquals(expect.getSpace().getName(), got.getSpace().getName());
+            Assert.assertEquals(expect.getLinks(), got.getLinks());
         } catch (Exception e) {
             e.printStackTrace();
-            fail();
+            Assert.fail();
         }
     }
 }

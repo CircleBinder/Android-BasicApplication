@@ -8,5 +8,5 @@ interface IInitializeBindService {
 
     oneway void removeObserver(IInitializeServiceCallback callback);
 
-    void AsyncStart();
+    void start();
 }

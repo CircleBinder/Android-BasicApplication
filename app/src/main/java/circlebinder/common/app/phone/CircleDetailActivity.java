@@ -1,14 +1,10 @@
 package circlebinder.common.app.phone;
 
-import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -19,6 +15,7 @@ import net.ichigotake.common.app.ActivityTripper;
 import net.ichigotake.common.content.OnBeforeLoadingListener;
 import net.ichigotake.common.os.BundleMerger;
 import net.ichigotake.common.util.Finders;
+import net.ichigotake.common.util.Optional;
 import net.ichigotake.common.view.ActionProvider;
 import net.ichigotake.common.view.MenuPresenter;
 import net.ichigotake.common.view.ReloadActionProvider;
@@ -31,12 +28,17 @@ import circlebinder.common.event.Circle;
 import circlebinder.common.search.CircleSearchOption;
 import circlebinder.common.app.BaseActivity;
 import circlebinder.R;
-import circlebinder.common.search.CircleCursorConverter;
-import circlebinder.common.search.CircleLoader;
+import circlebinder.common.table.EventCircleTable;
+import circlebinder.common.table.SQLite;
 import circlebinder.common.web.WebViewClient;
+import rx.Observable;
+import rx.Observer;
+import rx.Subscriber;
+import rx.android.observables.AndroidObservable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
-public final class CircleDetailActivity extends BaseActivity
-        implements Legacy, LoaderManager.LoaderCallbacks<Cursor> {
+public final class CircleDetailActivity extends BaseActivity implements Legacy {
 
     private static final String EXTRA_KEY_SEARCH_OPTION = "search_option";
     private static final String EXTRA_KEY_POSITION = "position";
@@ -83,7 +85,39 @@ public final class CircleDetailActivity extends BaseActivity
             }
         });
         webView.setWebViewClient(client);
-        getLoaderManager().initLoader(0, bundle, this);
+
+        AndroidObservable.bindActivity(this, Observable.create(new Observable.OnSubscribe<Circle>() {
+            @Override
+            public void call(Subscriber<? super Circle> subscriber) {
+                Optional<Circle> circle = EventCircleTable
+                        .findOne(SQLite.getDatabase(getApplicationContext()), searchOption);
+                if (circle.isPresent()) {
+                    subscriber.onNext(circle.get());
+                } else {
+                    subscriber.onError(new IllegalStateException());
+                }
+            }
+        }))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(new Observer<Circle>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("CircleDetail", "", e);
+                    }
+
+                    @Override
+                    public void onNext(Circle circle) {
+                        Log.d("CircleDetail", "cirlce " + circle.getName());
+                        CircleDetailActivity.this.circle = circle;
+                        webView.setCircle(circle);
+                        postEvent();
+                    }
+                });
     }
 
     @Override
@@ -112,7 +146,12 @@ public final class CircleDetailActivity extends BaseActivity
         presenter.setActionProvider(reloadItem, new ReloadActionProvider(this, webView));
         presenter.setShowAsAction(reloadItem, MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
         MenuItem selectorItem = presenter.inflate(R.menu.checklist_selector, R.id.menu_checklist_selector);
-        presenter.setActionProvider(selectorItem, new ChecklistSelectActionProvider(this, circle));
+        if (circle != null) {
+            selectorItem.setVisible(true);
+            presenter.setActionProvider(selectorItem, new ChecklistSelectActionProvider(this, circle));
+        } else {
+            selectorItem.setVisible(false);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -132,29 +171,6 @@ public final class CircleDetailActivity extends BaseActivity
     private void onCirclePageChanged(Circle circle) {
         this.actionBarHeaderView.setCircle(circle);
         invalidateOptionsMenu();
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CircleLoader(getApplicationContext(), searchOption);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        data.moveToPosition(currentPosition);
-        circle = new CircleCursorConverter().create(data);
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                webView.setCircle(circle);
-                postEvent();
-            }
-        });
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
     }
 
     private void postEvent() {

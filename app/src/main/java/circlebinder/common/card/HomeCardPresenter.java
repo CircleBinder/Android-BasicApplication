@@ -34,7 +34,7 @@ public final class HomeCardPresenter {
 
     public void reload() {
         destroy();
-        subscription = Optional.of(ObservableBinder.maybeBind(context, Observable.create(new HomeCardSubscriber()))
+        subscription = Optional.of(ObservableBinder.maybeBind(context, Observable.create(new HomeCardSubscriber(context)))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new HomeCardObserver(adapter))
