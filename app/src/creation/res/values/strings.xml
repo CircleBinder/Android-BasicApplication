@@ -5,7 +5,7 @@
     <string name="app_event_name">サンシャインクリエイション 2015 Winter</string>
     <string name="app_event_name_short">サンクリ</string>
     <string name="app_this_is_un_official_application">当アプリは「クリエイション事務局」公式のアプリではありません。</string>
-    <string name="app_update_schedule_label">サンクリ 2015 Spring に向けての更新予定</string>
+    <string name="app_update_schedule_label">サンクリ 2015 Summer に向けての更新予定</string>
     <string name="app_update_schedule_item">端末間でチェックリストを共有する\nチェックリストをエクスポートする\n過去の開催イベントのチェックリストを保持する\nサンクリ以外の同人イベントへの対応</string>
     <string name="app_tutorial_welcome_search_circle">サンクリのお気に入りサークルを探そう！</string>
     <string name="app_tutorial_welcome_add_checklist">お気に入りサークルを管理出来る！</string>
