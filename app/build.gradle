@@ -9,14 +9,13 @@ rootProject.ext.properties.each { key, value ->
     }
 }
 
-apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
 apply plugin: 'android-power-assert'
 apply plugin: 'robolectric'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '21.0.2'
+    buildToolsVersion '21.1.2'
 
     signingConfigs {
         release {
@@ -39,8 +38,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 21
-        versionCode 14
-        versionName '0.10'
+        versionCode 15
+        versionName '0.50'
 
         buildConfigField "String", "CRASH_REPORTER_KEY", "\"${project.properties.crashReporterKey}\""
     }
@@ -98,16 +97,13 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(dir: 'src/libs/', include: '*.jar')
     compile project(':vendor:android-sqlite-helper:sqlitehelper')
     compile 'am.ik.ltsv4j:ltsv4j:0.9.0'
-    compile 'com.android.support:appcompat-v7:21.0.2'
+    compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:cardview-v7:21.0.0'
     compile 'com.crittercism:crittercism-android-agent:4.5.4'
-    compile 'com.dmitriy-tarasov:android-intents:1.1.0'
-    compile 'com.github.hotchemi:ProgressMenuItem:0.3.3'
-    compile 'com.netflix.rxjava:rxjava-android:0.20.6'
     compile 'com.squareup.flow:flow:0.8'
+    compile 'io.reactivex:rxandroid:0.24.0'
     compile 'se.emilsjolander:stickylistheaders:2.5.0'
     androidTestCompile("junit:junit:4.10")
     androidTestCompile('org.robolectric:robolectric:2.4') {
