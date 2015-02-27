@@ -34,7 +34,7 @@ public final class EventCircleTableForInsert {
             this.spaceNo = spaceNo;
             return this;
         }
-
+        
         public Builder setBlockId(long blockId) {
             this.blockId = blockId;
             return this;

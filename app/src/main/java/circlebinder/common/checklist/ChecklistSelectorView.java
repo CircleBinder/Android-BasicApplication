@@ -16,6 +16,7 @@ import circlebinder.R;
 import circlebinder.common.event.Circle;
 import circlebinder.common.app.BroadcastEvent;
 import circlebinder.common.table.EventCircleTable;
+import circlebinder.common.table.EventCircleTableForUpdate;
 import circlebinder.common.table.SQLite;
 
 public class ChecklistSelectorView extends FrameLayout {
@@ -24,6 +25,7 @@ public class ChecklistSelectorView extends FrameLayout {
     private ChecklistPopupSelector selector;
     private View anchor;
     private Circle circle;
+    private EventCircleTable eventCircleTable;
 
     @SuppressWarnings("unused") // Public API
     public ChecklistSelectorView(Context context) {
@@ -60,6 +62,7 @@ public class ChecklistSelectorView extends FrameLayout {
         this.checklistColorView = finder.findOrNull(R.id.common_view_checklist_selector_label);
         this.selector = new ChecklistPopupSelector(getContext());
         this.anchor = checklistColorView;
+        this.eventCircleTable = new EventCircleTable(SQLite.getDatabase(getContext()));
         checklistColorView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,7 +77,7 @@ public class ChecklistSelectorView extends FrameLayout {
             @Override
             public void onItemClick(ChecklistColor item) {
                 updateChecklistColor(item, circle);
-                EventCircleTable.setChecklist(SQLite.getDatabase(getContext()), circle, item);
+                eventCircleTable.updateItem(new EventCircleTableForUpdate(circle.getId(), item));
                 getContext().sendBroadcast(BroadcastEvent.createIntent());
                 selector.dismiss();
             }

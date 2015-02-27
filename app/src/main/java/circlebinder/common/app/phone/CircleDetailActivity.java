@@ -89,8 +89,8 @@ public final class CircleDetailActivity extends BaseActivity implements Legacy {
         AndroidObservable.bindActivity(this, Observable.create(new Observable.OnSubscribe<Circle>() {
             @Override
             public void call(Subscriber<? super Circle> subscriber) {
-                Optional<Circle> circle = EventCircleTable
-                        .findOne(SQLite.getDatabase(getApplicationContext()), searchOption);
+                Optional<Circle> circle = new EventCircleTable(SQLite.getDatabase(getApplicationContext()))
+                        .findOne(searchOption);
                 if (circle.isPresent()) {
                     subscriber.onNext(circle.get());
                 } else {

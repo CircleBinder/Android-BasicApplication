@@ -73,7 +73,7 @@ public final class CircleSearchActivity extends BaseActivity {
         View actionBarView = getLayoutInflater().inflate(R.layout.common_action_bar_circle_search_option, null);
         EventBlockSelectorView blockSelectorView = Finders.from(actionBarView)
                 .findOrNull(R.id.common_action_bar_circle_search_option);
-        blockSelectorView.setBlockList(EventBlockTable.getAll(SQLite.getDatabase(this)));
+        blockSelectorView.setBlockList(new EventBlockTable(SQLite.getDatabase(this)).findAll());
         blockSelectorView.addOnItemSelectedListener(new OnItemSelectedEventListener<Block>() {
             @Override
             public void onItemSelected(Block item) {

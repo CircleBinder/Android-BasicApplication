@@ -45,7 +45,7 @@ public class CreationDatabaseInitializer {
         new LTSVReader<>(inputStream, new EventBlockParser(), new LTSVReadLineListener<EventBlockTableForInsert>() {
             @Override
             public void onLineRead(EventBlockTableForInsert item) {
-                EventBlockTable.insert(database, item);
+                new EventBlockTable(database).insertRow(item);
             }
         }).read();
     }
@@ -56,7 +56,7 @@ public class CreationDatabaseInitializer {
             @Override
             public void onLineRead(EventCircleTableForInsert item) {
                 builder.clear();
-                EventCircleTable.insert(database, item);
+                new EventCircleTable(database).insertRow(item);
             }
         }).read();
     }

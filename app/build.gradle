@@ -102,8 +102,10 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:cardview-v7:21.0.0'
     compile 'com.crittercism:crittercism-android-agent:4.5.4'
+    compile 'com.dmitriy-tarasov:android-intents:1.1.0'
     compile 'com.squareup.flow:flow:0.8'
     compile 'io.reactivex:rxandroid:0.24.0'
+    compile 'io.reactivex:rxandroid-framework:0.24.0'
     compile 'se.emilsjolander:stickylistheaders:2.5.0'
     androidTestCompile("junit:junit:4.10")
     androidTestCompile('org.robolectric:robolectric:2.4') {

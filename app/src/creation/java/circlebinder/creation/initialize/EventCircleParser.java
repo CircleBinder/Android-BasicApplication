@@ -29,7 +29,7 @@ class EventCircleParser implements LTSVParser<EventCircleTableForInsert> {
                     return Optional.empty();
                 }
                 Space space = creationSpaceFactory.from(line.get("space"));
-                Optional<Block> block = EventBlockTable.get(database, space.getBlockName());
+                Optional<Block> block = new EventBlockTable(database).find(space.getBlockName());
                 assert block.isPresent();
                 return Optional.of(new EventCircleTableForInsert.Builder()
                         .setBlockId(block.get().getId())

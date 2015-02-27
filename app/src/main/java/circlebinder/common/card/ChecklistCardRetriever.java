@@ -1,7 +1,7 @@
 package circlebinder.common.card;
 
-import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -12,14 +12,13 @@ import circlebinder.common.event.Circle;
 import circlebinder.common.search.CircleSearchOption;
 import circlebinder.common.search.CircleSearchOptionBuilder;
 import circlebinder.common.table.EventCircleTable;
-import circlebinder.common.table.SQLite;
 
 final class ChecklistCardRetriever implements Callable<List<HomeCard>> {
 
-    private final Context context;
+    private final EventCircleTable eventCircleTable;
 
-    ChecklistCardRetriever(Context context) {
-        this.context = context;
+    ChecklistCardRetriever(SQLiteDatabase database) {
+        this.eventCircleTable = new EventCircleTable(database);
     }
 
     @Override
@@ -29,10 +28,10 @@ final class ChecklistCardRetriever implements Callable<List<HomeCard>> {
             CircleSearchOption option = new CircleSearchOptionBuilder()
                     .setChecklist(checklistColor)
                     .build();
-            Cursor cursor = EventCircleTable.find(SQLite.getDatabase(context), option);
+            Cursor cursor = eventCircleTable.find(option);
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
-                for (Circle circle : EventCircleTable.build(SQLite.getDatabase(context), cursor).asSet()) {
+                for (Circle circle : eventCircleTable.build(cursor).asSet()) {
                     cardList.add(new ChecklistCard(circle));
                 }
             }

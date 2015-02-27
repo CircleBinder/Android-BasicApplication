@@ -3,7 +3,7 @@ package circlebinder.common.table;
 import net.ichigotake.sqlitehelper.Configuration;
 import net.ichigotake.sqlitehelper.MigrationCallback;
 import net.ichigotake.sqlitehelper.NoMigrationCallback;
-import net.ichigotake.sqlitehelper.schema.Table;
+import net.ichigotake.sqlitehelper.schema.TableDefinition;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,10 +11,10 @@ import java.util.List;
 public class SQLiteConfiguration implements Configuration {
     
     @Override
-    public List<Table> getDatabaseTables() {
+    public List<TableDefinition> getDatabaseTables() {
         return Arrays.asList(
-                new EventBlockTable(),
-                new EventCircleTable()
+                new EventBlockTableDefinition(),
+                new EventCircleTableDefinition()
 //                TBD
 //                new EventChecklistHistoryTable(),
 //                new EventTable()

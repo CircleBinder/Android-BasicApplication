@@ -1,7 +1,7 @@
 package circlebinder.common.search;
 
-import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import net.ichigotake.common.util.Optional;
 import net.ichigotake.common.widget.CursorItemConverter;
@@ -9,18 +9,17 @@ import net.ichigotake.common.widget.CursorItemConverter;
 import circlebinder.common.Legacy;
 import circlebinder.common.event.Circle;
 import circlebinder.common.table.EventCircleTable;
-import circlebinder.common.table.SQLite;
 
 public final class CircleCursorConverter implements CursorItemConverter<Circle>, Legacy {
 
-    private final Context context;
+    private final EventCircleTable eventCircleTable;
 
-    public CircleCursorConverter(Context context) {
-        this.context = context;
+    public CircleCursorConverter(SQLiteDatabase database) {
+        this.eventCircleTable = new EventCircleTable(database);
     }
 
     @Override
     public Optional<Circle> create(Cursor cursor) {
-        return EventCircleTable.build(SQLite.getDatabase(context), cursor);
+        return eventCircleTable.build(cursor);
     }
 }

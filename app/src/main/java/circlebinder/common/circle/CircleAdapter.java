@@ -11,6 +11,7 @@ import net.ichigotake.common.widget.CursorAdapter;
 import circlebinder.common.event.Circle;
 import circlebinder.R;
 import circlebinder.common.search.CircleCursorConverter;
+import circlebinder.common.table.SQLite;
 
 import net.ichigotake.common.widget.SectionHeaderViewHolder;
 
@@ -19,7 +20,7 @@ public final class CircleAdapter extends CursorAdapter<Circle, CircleViewHolder,
     private final Context context;
 
     public CircleAdapter(Context context) {
-        super(context, null, new CircleCursorConverter(context));
+        super(context, null, new CircleCursorConverter(SQLite.getDatabase(context)));
         this.context = context;
     }
 
