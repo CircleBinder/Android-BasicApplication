@@ -14,13 +14,13 @@ import net.ichigotake.common.util.Finders;
 import net.ichigotake.common.view.MenuPresenter;
 import net.ichigotake.common.view.ReloadActionProvider;
 
-import circlebinder.common.app.BaseActivity;
+import net.ichigotake.common.rx.RxActionBarActivity;
 import circlebinder.R;
 import circlebinder.common.web.WebView;
 import circlebinder.common.web.WebViewClient;
 import progress.menu.item.ProgressMenuItemHelper;
 
-public final class WebViewActivity extends BaseActivity {
+public final class WebViewActivity extends RxActionBarActivity {
 
     private final static String KEY_URL = "url";
 

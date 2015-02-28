@@ -21,12 +21,12 @@ import net.ichigotake.common.view.MenuPresenter;
 import net.ichigotake.common.view.ReloadActionProvider;
 
 import circlebinder.common.Legacy;
+import net.ichigotake.common.rx.RxActionBarActivity;
 import circlebinder.common.checklist.ChecklistSelectActionProvider;
 import circlebinder.common.circle.CircleDetailHeaderView;
 import circlebinder.common.circle.CircleWebView;
 import circlebinder.common.event.Circle;
 import circlebinder.common.search.CircleSearchOption;
-import circlebinder.common.app.BaseActivity;
 import circlebinder.R;
 import circlebinder.common.table.EventCircleTable;
 import circlebinder.common.table.SQLite;
@@ -38,7 +38,7 @@ import rx.android.observables.AndroidObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public final class CircleDetailActivity extends BaseActivity implements Legacy {
+public final class CircleDetailActivity extends RxActionBarActivity implements Legacy {
 
     private static final String EXTRA_KEY_SEARCH_OPTION = "search_option";
     private static final String EXTRA_KEY_POSITION = "position";

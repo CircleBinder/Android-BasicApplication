@@ -8,7 +8,7 @@ import android.view.MenuItem;
 import net.ichigotake.common.app.ActivityNavigation;
 import net.ichigotake.common.util.Finders;
 
-import circlebinder.common.app.BaseActivity;
+import net.ichigotake.common.rx.RxActionBarActivity;
 import circlebinder.R;
 import circlebinder.common.flow.AppFlow;
 import circlebinder.common.flow.FlowBundler;
@@ -19,7 +19,7 @@ import circlebinder.common.flow.Screen;
 import flow.Backstack;
 import flow.Flow;
 
-public final class AboutApplicationActivity extends BaseActivity implements HasFlow {
+public final class AboutApplicationActivity extends RxActionBarActivity implements HasFlow {
 
     public static Intent createIntent(Context context) {
         return new Intent(context, AboutApplicationActivity.class);

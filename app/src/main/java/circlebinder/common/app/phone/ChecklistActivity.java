@@ -15,14 +15,14 @@ import net.ichigotake.common.util.Finders;
 import net.ichigotake.common.util.Optional;
 
 import circlebinder.R;
-import circlebinder.common.app.BaseActivity;
+import net.ichigotake.common.rx.RxActionBarActivity;
 import circlebinder.common.app.BroadcastEvent;
 import circlebinder.common.checklist.ChecklistColor;
 import circlebinder.common.search.CircleSearchOption;
 import circlebinder.common.search.CircleSearchOptionBuilder;
 import circlebinder.common.search.CircleSearchView;
 
-public final class ChecklistActivity extends BaseActivity {
+public final class ChecklistActivity extends RxActionBarActivity {
 
     private static final String KEY_CHECKLIST_COLOR = "checklist_color";
 

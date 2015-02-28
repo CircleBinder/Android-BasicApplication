@@ -9,12 +9,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import net.ichigotake.common.rx.ObservableBuilder;
 import net.ichigotake.common.util.ActivityViewFinder;
 import net.ichigotake.common.util.Finders;
 import net.ichigotake.common.util.Optional;
 
 import circlebinder.common.Legacy;
-import circlebinder.common.app.BaseActivity;
+
+import net.ichigotake.common.rx.RxActionBarActivity;
 import circlebinder.R;
 import circlebinder.common.app.BroadcastEvent;
 import circlebinder.creation.home.HomeCardListView;
@@ -23,7 +25,7 @@ import circlebinder.creation.system.NavigationDrawerRenderer;
 /**
  * 通常起動時のファーストビュー
  */
-public final class HomeActivity extends BaseActivity implements Legacy {
+public class HomeActivity extends RxActionBarActivity {
 
     public static Intent createIntent(Context context) {
         return new Intent(context, HomeActivity.class);

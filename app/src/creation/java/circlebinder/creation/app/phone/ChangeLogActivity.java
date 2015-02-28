@@ -10,12 +10,12 @@ import net.ichigotake.common.util.Finders;
 
 import java.io.IOException;
 
-import circlebinder.common.app.BaseActivity;
+import net.ichigotake.common.rx.RxActionBarActivity;
 import circlebinder.R;
 import circlebinder.common.system.ChangeLogLoader;
 import circlebinder.common.system.ChangeLogView;
 
-public final class ChangeLogActivity extends BaseActivity {
+public final class ChangeLogActivity extends RxActionBarActivity {
 
     public static Intent createIntent(Context context) {
         return new Intent(context, ChangeLogActivity.class);

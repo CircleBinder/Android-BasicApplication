@@ -20,20 +20,20 @@ import net.ichigotake.common.view.MenuPresenter;
 import net.ichigotake.common.widget.OnItemSelectedEventListener;
 
 import circlebinder.common.app.BroadcastEvent;
+import net.ichigotake.common.rx.RxActionBarActivity;
 import circlebinder.common.checklist.EventBlockSelectorView;
 import circlebinder.common.event.Block;
 import circlebinder.common.search.CircleSearchOption;
 import circlebinder.common.search.CircleSearchOptionBuilder;
 import circlebinder.common.search.CircleSearchView;
 import circlebinder.common.search.InputKeywordView;
-import circlebinder.common.app.BaseActivity;
 import circlebinder.R;
 import circlebinder.common.search.OnInputTextListener;
 import circlebinder.common.search.SearchFormStore;
 import circlebinder.common.table.EventBlockTable;
 import circlebinder.common.table.SQLite;
 
-public final class CircleSearchActivity extends BaseActivity {
+public final class CircleSearchActivity extends RxActionBarActivity {
 
     public static Intent createIntent(Context context) {
         return new Intent(context, CircleSearchActivity.class);

@@ -17,13 +17,13 @@ import net.ichigotake.common.util.ActivityViewFinder;
 import net.ichigotake.common.util.Finders;
 
 import circlebinder.common.Legacy;
-import circlebinder.common.app.BaseActivity;
+import net.ichigotake.common.rx.RxActionBarActivity;
 import circlebinder.R;
 import circlebinder.creation.initialize.DatabaseInitializeService;
 import circlebinder.creation.initialize.IInitializeBindService;
 import circlebinder.creation.initialize.IInitializeServiceCallback;
 
-public final class DatabaseInitializeActivity extends BaseActivity
+public final class DatabaseInitializeActivity extends RxActionBarActivity
         implements Legacy {
 
     public static Intent createIntent(Context context) {
