@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import net.ichigotake.common.app.ActivityNavigation;
+import net.ichigotake.common.app.IntentFactory;
 import net.ichigotake.common.util.Finders;
 
 import java.io.IOException;
@@ -17,8 +18,13 @@ import circlebinder.common.system.ChangeLogView;
 
 public final class ChangeLogActivity extends RxActionBarActivity {
 
-    public static Intent createIntent(Context context) {
-        return new Intent(context, ChangeLogActivity.class);
+    public static IntentFactory from() {
+        return new IntentFactory() {
+            @Override
+            public Intent createIntent(Context context) {
+                return new Intent(context, ChangeLogActivity.class);
+            }
+        };
     }
 
     @Override

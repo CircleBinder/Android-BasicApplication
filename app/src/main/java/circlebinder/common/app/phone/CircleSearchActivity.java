@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import net.ichigotake.common.app.ActivityNavigation;
+import net.ichigotake.common.app.IntentFactory;
 import net.ichigotake.common.util.ActivityViewFinder;
 import net.ichigotake.common.util.Finders;
 import net.ichigotake.common.util.Optional;
@@ -35,10 +36,15 @@ import circlebinder.common.table.SQLite;
 
 public final class CircleSearchActivity extends RxActionBarActivity {
 
-    public static Intent createIntent(Context context) {
-        return new Intent(context, CircleSearchActivity.class);
+    public static IntentFactory with() {
+        return new IntentFactory() {
+            @Override
+            public Intent createIntent(Context context) {
+                return new Intent(context, CircleSearchActivity.class);
+            }
+        };
     }
-
+    
     private CircleSearchOptionBuilder searchOptionBuilder = new CircleSearchOptionBuilder();
     private CircleSearchView circlesView;
     private SearchFormStore searchFormStore;

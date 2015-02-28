@@ -12,6 +12,7 @@ import android.os.RemoteException;
 import android.view.View;
 
 import net.ichigotake.common.app.ActivityTripper;
+import net.ichigotake.common.app.IntentFactory;
 import net.ichigotake.common.app.OnClickToTrip;
 import net.ichigotake.common.util.ActivityViewFinder;
 import net.ichigotake.common.util.Finders;
@@ -26,8 +27,13 @@ import circlebinder.creation.initialize.IInitializeServiceCallback;
 public final class DatabaseInitializeActivity extends RxActionBarActivity
         implements Legacy {
 
-    public static Intent createIntent(Context context) {
-        return new Intent(context, DatabaseInitializeActivity.class);
+    public static IntentFactory from() {
+        return new IntentFactory() {
+            @Override
+            public Intent createIntent(Context context) {
+                return new Intent(context, DatabaseInitializeActivity.class);
+            }
+        };
     }
 
     private boolean serviceBind;
@@ -67,7 +73,7 @@ public final class DatabaseInitializeActivity extends RxActionBarActivity
         ActivityViewFinder finder = Finders.from(this);
         View finishedView = finder.findOrNull(R.id.creation_activity_initialize_finished);
         finishedView.setOnClickListener(new OnClickToTrip(
-                new ActivityTripper(this, HomeActivity.createIntent(this)).withFinish()
+                ActivityTripper.from(this, HomeActivity.from()).withFinish()
         ));
         handler = new InitializeHandler(
                 finder.findOrNull(R.id.creation_activity_initialize_progress),

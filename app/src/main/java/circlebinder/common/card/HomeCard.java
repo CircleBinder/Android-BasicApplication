@@ -1,7 +1,8 @@
 package circlebinder.common.card;
 
 import android.content.Context;
-import android.content.Intent;
+
+import net.ichigotake.common.app.IntentFactory;
 
 public interface HomeCard {
 
@@ -11,6 +12,6 @@ public interface HomeCard {
 
     int getBackgroundResource();
 
-    Intent createTransitIntent(Context context);
+    IntentFactory createTransitIntentFactory(Context context);
 
 }

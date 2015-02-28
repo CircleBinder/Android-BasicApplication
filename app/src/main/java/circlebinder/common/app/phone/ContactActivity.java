@@ -7,13 +7,19 @@ import android.view.MenuItem;
 
 import net.ichigotake.common.app.ActivityNavigation;
 
+import net.ichigotake.common.app.IntentFactory;
 import net.ichigotake.common.rx.RxActionBarActivity;
 import circlebinder.R;
 
 public final class ContactActivity extends RxActionBarActivity {
 
-    public static Intent createIntent(Context context) {
-        return new Intent(context, ContactActivity.class);
+    public static IntentFactory from() {
+        return new IntentFactory() {
+            @Override
+            public Intent createIntent(Context context) {
+                return new Intent(context, ContactActivity.class);
+            }
+        };
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import net.ichigotake.common.app.IntentFactory;
 import net.ichigotake.common.rx.ObservableBuilder;
 import net.ichigotake.common.util.ActivityViewFinder;
 import net.ichigotake.common.util.Finders;
@@ -27,8 +28,13 @@ import circlebinder.creation.system.NavigationDrawerRenderer;
  */
 public class HomeActivity extends RxActionBarActivity {
 
-    public static Intent createIntent(Context context) {
-        return new Intent(context, HomeActivity.class);
+    public static IntentFactory from() {
+        return new IntentFactory() {
+            @Override
+            public Intent createIntent(Context context) {
+                return new Intent(context, HomeActivity.class);
+            }
+        };
     }
 
     private Optional<BroadcastReceiver> broadcastReceiver = Optional.empty();

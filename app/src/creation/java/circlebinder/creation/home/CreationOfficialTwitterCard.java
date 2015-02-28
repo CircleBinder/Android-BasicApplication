@@ -34,7 +34,7 @@ public final class CreationOfficialTwitterCard implements HomeCard {
     }
 
     @Override
-    public Intent createTransitIntent(Context context) {
+    public Intent createTransitIntentFactory(Context context) {
         return IntentUtils.openLink(context.getString(R.string.app_event_twitter_account_url));
     }
 }

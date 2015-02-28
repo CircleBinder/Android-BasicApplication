@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import net.ichigotake.common.app.ActivityNavigation;
 import net.ichigotake.common.content.OnAfterLoadingListener;
 import net.ichigotake.common.content.OnBeforeLoadingListener;
+import net.ichigotake.common.app.IntentFactory;
 import net.ichigotake.common.os.BundleMerger;
 import net.ichigotake.common.util.Finders;
 import net.ichigotake.common.view.MenuPresenter;
@@ -24,10 +25,15 @@ public final class WebViewActivity extends RxActionBarActivity {
 
     private final static String KEY_URL = "url";
 
-    public static Intent createIntent(Context context, String url) {
-        Intent intent = new Intent(context, WebViewActivity.class);
-        intent.putExtra(KEY_URL, url);
-        return intent;
+    public static IntentFactory from(final String url) {
+        return new IntentFactory() {
+            @Override
+            public Intent createIntent(Context context) {
+                Intent intent = new Intent(context, WebViewActivity.class);
+                intent.putExtra(KEY_URL, url);
+                return intent;
+            }
+        };
     }
 
     private String url;

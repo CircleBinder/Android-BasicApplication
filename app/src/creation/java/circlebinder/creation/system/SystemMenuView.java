@@ -40,12 +40,9 @@ public final class SystemMenuView extends ListView {
         setDivider(null);
 
         SystemMenuAdapter adapter = new SystemMenuAdapter(getContext());
-        adapter.add(new SystemMenuItem(getContext().getString(R.string.common_send_feedback), 0,
-                ContactActivity.createIntent(getContext())));
-        adapter.add(new SystemMenuItem(getContext().getString(R.string.common_change_log), 0,
-                ChangeLogActivity.createIntent(getContext())));
-        adapter.add(new SystemMenuItem(getContext().getString(R.string.common_about), 0,
-                AboutApplicationActivity.createIntent(getContext())));
+        adapter.add(new SystemMenuItem(getContext().getString(R.string.common_send_feedback), 0, ContactActivity.from()));
+        adapter.add(new SystemMenuItem(getContext().getString(R.string.common_change_log), 0, ChangeLogActivity.from()));
+        adapter.add(new SystemMenuItem(getContext().getString(R.string.common_about), 0, AboutApplicationActivity.from()));
 
         View headerView = LayoutInflater.from(getContext())
                 .inflate(R.layout.creation_system_menu_header, this, false);
@@ -56,7 +53,7 @@ public final class SystemMenuView extends ListView {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 SystemMenuItem item = (SystemMenuItem) parent.getItemAtPosition(position);
-                new ActivityTripper(getContext(), item.getTransitionIntent()).trip();
+                ActivityTripper.from(getContext(), item.getTransitionIntent()).trip();
             }
         });
     }

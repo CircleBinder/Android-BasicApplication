@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import net.ichigotake.common.app.ActivityNavigation;
+import net.ichigotake.common.app.IntentFactory;
 import net.ichigotake.common.util.Finders;
 
 import net.ichigotake.common.rx.RxActionBarActivity;
@@ -21,8 +22,13 @@ import flow.Flow;
 
 public final class AboutApplicationActivity extends RxActionBarActivity implements HasFlow {
 
-    public static Intent createIntent(Context context) {
-        return new Intent(context, AboutApplicationActivity.class);
+    public static IntentFactory from() {
+        return new IntentFactory() {
+            @Override
+            public Intent createIntent(Context context) {
+                return new Intent(context, AboutApplicationActivity.class);
+            }
+        };
     }
 
     private final FlowBundler flowBundler =

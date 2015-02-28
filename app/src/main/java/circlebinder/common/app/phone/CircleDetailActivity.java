@@ -12,6 +12,8 @@ import com.dmitriy.tarasov.android.intents.IntentUtils;
 
 import net.ichigotake.common.app.ActivityNavigation;
 import net.ichigotake.common.app.ActivityTripper;
+import net.ichigotake.common.app.IntentFactory;
+import net.ichigotake.common.app.TextShareIntentFactory;
 import net.ichigotake.common.content.OnBeforeLoadingListener;
 import net.ichigotake.common.os.BundleMerger;
 import net.ichigotake.common.util.Finders;
@@ -43,13 +45,18 @@ public final class CircleDetailActivity extends RxActionBarActivity implements L
     private static final String EXTRA_KEY_SEARCH_OPTION = "search_option";
     private static final String EXTRA_KEY_POSITION = "position";
 
-    public static Intent createIntent(Context context, CircleSearchOption searchOption, int position) {
-        Intent intent = new Intent(context, CircleDetailActivity.class);
-        Bundle extras = new Bundle();
-        extras.putParcelable(EXTRA_KEY_SEARCH_OPTION, searchOption);
-        extras.putInt(EXTRA_KEY_POSITION, position);
-        intent.putExtras(extras);
-        return intent;
+    public static IntentFactory from(final CircleSearchOption searchOption, final int position) {
+        return new IntentFactory() {
+            @Override
+            public Intent createIntent(Context context) {
+                Intent intent = new Intent(context, CircleDetailActivity.class);
+                Bundle extras = new Bundle();
+                extras.putParcelable(EXTRA_KEY_SEARCH_OPTION, searchOption);
+                extras.putInt(EXTRA_KEY_POSITION, position);
+                intent.putExtras(extras);
+                return intent;
+            }
+        };
     }
 
     private CircleSearchOption searchOption;
@@ -127,10 +134,9 @@ public final class CircleDetailActivity extends RxActionBarActivity implements L
         presenter.setActionProvider(shareItem, new ActionProvider(this, new ActionProvider.OnClickListener() {
             @Override
             public void onClick() {
-                new ActivityTripper(
-                        getApplicationContext(),
-                        IntentUtils.shareText(circle.getName(), currentUrl)
-                ).trip();
+                ActivityTripper
+                        .from(CircleDetailActivity.this, new TextShareIntentFactory(circle.getName(), currentUrl))
+                        .trip();
             }
         }));
         presenter.setShowAsAction(shareItem, MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);

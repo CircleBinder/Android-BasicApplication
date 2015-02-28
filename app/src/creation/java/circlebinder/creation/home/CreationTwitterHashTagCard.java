@@ -1,9 +1,9 @@
 package circlebinder.creation.home;
 
 import android.content.Context;
-import android.content.Intent;
 
-import com.dmitriy.tarasov.android.intents.IntentUtils;
+import net.ichigotake.common.app.IntentFactory;
+import net.ichigotake.common.app.OpenLinkIntentFactory;
 
 import circlebinder.R;
 import circlebinder.common.card.HomeCard;
@@ -34,7 +34,7 @@ public final class CreationTwitterHashTagCard implements HomeCard {
     }
 
     @Override
-    public Intent createTransitIntent(Context context) {
-        return IntentUtils.openLink(context.getString(R.string.app_event_twitter_hash_tag_url));
+    public IntentFactory createTransitIntentFactory(Context context) {
+        return new OpenLinkIntentFactory(context.getString(R.string.app_event_twitter_hash_tag_url));
     }
 }

@@ -1,7 +1,8 @@
 package circlebinder.common.card;
 
 import android.content.Context;
-import android.content.Intent;
+
+import net.ichigotake.common.app.IntentFactory;
 
 import circlebinder.common.app.phone.ChecklistActivity;
 import circlebinder.common.checklist.ChecklistColor;
@@ -35,7 +36,7 @@ final class ChecklistCard implements HomeCard {
     }
 
     @Override
-    public Intent createTransitIntent(Context context) {
-        return ChecklistActivity.createIntent(context, color);
+    public IntentFactory createTransitIntentFactory(Context context) {
+        return ChecklistActivity.from(color);
     }
 }

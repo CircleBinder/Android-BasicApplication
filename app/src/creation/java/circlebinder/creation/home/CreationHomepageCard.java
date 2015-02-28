@@ -1,7 +1,8 @@
 package circlebinder.creation.home;
 
 import android.content.Context;
-import android.content.Intent;
+
+import net.ichigotake.common.app.IntentFactory;
 
 import circlebinder.R;
 import circlebinder.common.app.phone.WebViewActivity;
@@ -34,7 +35,7 @@ public final class CreationHomepageCard implements HomeCard {
     }
 
     @Override
-    public Intent createTransitIntent(Context context) {
-        return WebViewActivity.createIntent(context, context.getString(R.string.app_event_official_site_url));
+    public IntentFactory createTransitIntentFactory(Context context) {
+        return WebViewActivity.from(context.getString(R.string.app_event_official_site_url));
     }
 }

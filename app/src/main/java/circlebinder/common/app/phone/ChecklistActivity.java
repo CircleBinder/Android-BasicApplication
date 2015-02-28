@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
 import net.ichigotake.common.app.ActivityNavigation;
+import net.ichigotake.common.app.IntentFactory;
 import net.ichigotake.common.os.BundleMerger;
 import net.ichigotake.common.util.Finders;
 import net.ichigotake.common.util.Optional;
@@ -26,12 +27,17 @@ public final class ChecklistActivity extends RxActionBarActivity {
 
     private static final String KEY_CHECKLIST_COLOR = "checklist_color";
 
-    public static Intent createIntent(Context context, ChecklistColor checklistColor) {
-        Intent intent = new Intent(context, ChecklistActivity.class);
-        Bundle map = new Bundle();
-        map.putSerializable(KEY_CHECKLIST_COLOR, checklistColor);
-        intent.putExtras(map);
-        return intent;
+    public static IntentFactory from(final ChecklistColor checklistColor) {
+        return new IntentFactory() {
+            @Override
+            public Intent createIntent(Context context) {
+                Intent intent = new Intent(context, ChecklistActivity.class);
+                Bundle map = new Bundle();
+                map.putSerializable(KEY_CHECKLIST_COLOR, checklistColor);
+                intent.putExtras(map);
+                return intent;
+            }
+        };
     }
 
     private ChecklistColor checklistColor;

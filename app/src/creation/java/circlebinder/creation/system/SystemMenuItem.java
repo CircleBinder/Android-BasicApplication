@@ -1,14 +1,14 @@
 package circlebinder.creation.system;
 
-import android.content.Intent;
+import net.ichigotake.common.app.IntentFactory;
 
 final class SystemMenuItem {
 
     private final CharSequence label;
     private final int icon;
-    private final Intent transitionIntent;
+    private final IntentFactory transitionIntent;
 
-    SystemMenuItem(CharSequence label, int icon, Intent transitionIntent) {
+    SystemMenuItem(CharSequence label, int icon, IntentFactory transitionIntent) {
         this.label = label;
         this.icon = icon;
         this.transitionIntent = transitionIntent;
@@ -22,7 +22,7 @@ final class SystemMenuItem {
         return icon;
     }
 
-    public Intent getTransitionIntent() {
+    public IntentFactory getTransitionIntent() {
         return transitionIntent;
     }
 

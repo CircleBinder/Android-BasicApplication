@@ -2,7 +2,6 @@ package circlebinder.creation.home;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
@@ -64,8 +63,8 @@ public class HomeCardListFooterView extends LinearLayout {
 
         @Override
         public void onClick(View v) {
-            Intent intent = card.createTransitIntent(v.getContext());
-            new ActivityTripper(v.getContext(), intent)
+            ActivityTripper
+                    .from(v.getContext(), card.createTransitIntentFactory(v.getContext()))
                     .trip();
         }
     }

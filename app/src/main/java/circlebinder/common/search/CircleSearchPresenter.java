@@ -30,10 +30,9 @@ final class CircleSearchPresenter {
     }
 
     void itemClicked(int position) {
-        new ActivityTripper(
-                context,
-                CircleDetailActivity.createIntent(context, searchOptionBuilder.build(), position)
-        ).trip();
+        ActivityTripper
+                .from(context, CircleDetailActivity.from(searchOptionBuilder.build(), position))
+                .trip();
     }
 
     void setFilter(CircleSearchOption searchOption) {

@@ -9,12 +9,20 @@ import android.util.Log;
  * アクティビティの遷移をする
  */
 public class ActivityTripper implements Tripper {
+    
+    public static ActivityTripper from(Context context, IntentFactory intentFactory) {
+        return new ActivityTripper(context, intentFactory.createIntent(context));
+    }
 
     private final String LOG_TAG = ActivityTripper.class.getSimpleName();
     private final Context context;
     private final Intent intent;
     private boolean withFinish;
 
+    /**
+     * @deprecated 下位互換性を維持するためのもの。クラス外から使われなくなったら private にする
+     */
+    @Deprecated
     public ActivityTripper(Context context, Intent intent) {
         this.context = context;
         this.intent = intent;
