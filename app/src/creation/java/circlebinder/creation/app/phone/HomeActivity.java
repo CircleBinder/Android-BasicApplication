@@ -1,6 +1,5 @@
 package circlebinder.creation.app.phone;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -10,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import net.ichigotake.common.app.IntentFactory;
+import net.ichigotake.common.app.broadcast.ReloadEventReceiverFactory;
 import net.ichigotake.common.rx.ObservableBuilder;
 import net.ichigotake.common.util.ActivityViewFinder;
 import net.ichigotake.common.util.Finders;
@@ -37,7 +37,6 @@ public class HomeActivity extends RxActionBarActivity {
         };
     }
 
-    private Optional<BroadcastReceiver> broadcastReceiver = Optional.empty();
     private HomeCardListView homeCardListView;
     private NavigationDrawerRenderer drawerRenderer;
 
@@ -56,12 +55,13 @@ public class HomeActivity extends RxActionBarActivity {
         );
         homeCardListView = finder.findOrNull(R.id.creation_activity_home_checklist_list);
         broadcastReceiver = Optional.<BroadcastReceiver>of(new BroadcastReceiver() {
+
+        registerReceiver(new ReloadEventReceiverFactory() {
             @Override
-            public void onReceive(Context context, Intent intent) {
-                homeCardListView.reload();
+            public void callback() {
+                reload();
             }
         });
-        registerReceiver(broadcastReceiver.get(), BroadcastEvent.createIntentFilter());
     }
 
     @Override
@@ -89,12 +89,5 @@ public class HomeActivity extends RxActionBarActivity {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        for (BroadcastReceiver registeredReceiver : broadcastReceiver.asSet()) {
-            unregisterReceiver(registeredReceiver);
-        }
-        super.onDestroy();
-    }
-
 }
+

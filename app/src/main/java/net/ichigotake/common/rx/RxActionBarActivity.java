@@ -3,9 +3,9 @@ package net.ichigotake.common.rx;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
-import net.ichigotake.common.app.broadcast.BroadcastManager;
+import net.ichigotake.common.app.broadcast.BroadcastLifecycle;
 
-import net.ichigotake.common.app.broadcast.Broadcaster;
+import net.ichigotake.common.app.broadcast.BroadcastReceiverFactory;
 import rx.Observable;
 import rx.android.lifecycle.LifecycleEvent;
 import rx.subjects.BehaviorSubject;
@@ -13,21 +13,21 @@ import rx.subjects.BehaviorSubject;
 public abstract class RxActionBarActivity extends ActionBarActivity {
 
     private final BehaviorSubject<LifecycleEvent> lifecycleSubject = BehaviorSubject.create();
-    private final BroadcastManager broadcastManager = new BroadcastManager();
+    private final BroadcastLifecycle broadcastLifecycle = new BroadcastLifecycle();
 
     public Observable<LifecycleEvent> lifecycle() {
         return lifecycleSubject.asObservable();
     }
     
-    public void registerReceiver(Broadcaster broadcaster) {
-        broadcastManager.registerReceiver(broadcaster);
+    public void registerReceiver(BroadcastReceiverFactory broadcastReceiverFactory) {
+        broadcastLifecycle.registerReceiver(broadcastReceiverFactory);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         lifecycleSubject.onNext(LifecycleEvent.CREATE);
-        broadcastManager.onCreate(this);
+        broadcastLifecycle.onCreate(this);
     }
 
     @Override
@@ -56,7 +56,7 @@ public abstract class RxActionBarActivity extends ActionBarActivity {
 
     @Override
     protected void onDestroy() {
-        broadcastManager.onDestroy();
+        broadcastLifecycle.onDestroy();
         lifecycleSubject.onNext(LifecycleEvent.DESTROY);
         super.onDestroy();
     }

@@ -1,6 +1,5 @@
 package circlebinder.common.app.phone;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,13 +10,12 @@ import android.view.MenuItem;
 
 import net.ichigotake.common.app.ActivityNavigation;
 import net.ichigotake.common.app.IntentFactory;
+import net.ichigotake.common.app.broadcast.ReloadEventReceiverFactory;
 import net.ichigotake.common.os.BundleMerger;
 import net.ichigotake.common.util.Finders;
-import net.ichigotake.common.util.Optional;
 
 import circlebinder.R;
 import net.ichigotake.common.rx.RxActionBarActivity;
-import circlebinder.common.app.BroadcastEvent;
 import circlebinder.common.checklist.ChecklistColor;
 import circlebinder.common.search.CircleSearchOption;
 import circlebinder.common.search.CircleSearchOptionBuilder;
@@ -42,7 +40,6 @@ public final class ChecklistActivity extends RxActionBarActivity {
 
     private ChecklistColor checklistColor;
     private CircleSearchView checklistView;
-    private Optional<BroadcastReceiver> broadcastReceiver = Optional.empty();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,20 +55,24 @@ public final class ChecklistActivity extends RxActionBarActivity {
         CircleSearchOption searchOption = new CircleSearchOptionBuilder()
                 .setChecklist(checklistColor).build();
         checklistView.setFilter(searchOption);
-        broadcastReceiver = Optional.<BroadcastReceiver>of(new BroadcastReceiver() {
+        registerReceiver(new ReloadEventReceiverFactory() {
             @Override
-            public void onReceive(Context context, Intent intent) {
-                if (checklistView != null) {
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            checklistView.reload();
-                        }
-                    });
-                }
+            public void callback() {
+                reload();
             }
         });
-        registerReceiver(broadcastReceiver.get(), BroadcastEvent.createIntentFilter());
+    }
+    
+    private void reload() {
+        if (checklistView == null) {
+            return;
+        }
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                checklistView.reload();
+            }
+        });
     }
 
     @Override
@@ -84,14 +85,6 @@ public final class ChecklistActivity extends RxActionBarActivity {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(KEY_CHECKLIST_COLOR, checklistColor);
-    }
-
-    @Override
-    public void onDestroy() {
-        for (BroadcastReceiver registeredReceiver : broadcastReceiver.asSet()) {
-            unregisterReceiver(registeredReceiver);
-        }
-        super.onDestroy();
     }
 
 }

@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import net.ichigotake.common.app.broadcast.ReloadEventReceiverFactory;
 import net.ichigotake.common.util.Finders;
 import net.ichigotake.common.util.ViewFinder;
 import net.ichigotake.common.view.inputmethod.SoftInput;
@@ -14,7 +15,6 @@ import net.ichigotake.common.widget.OnItemClickEventListener;
 
 import circlebinder.R;
 import circlebinder.common.event.Circle;
-import circlebinder.common.app.BroadcastEvent;
 import circlebinder.common.table.EventCircleTable;
 import circlebinder.common.table.EventCircleTableForUpdate;
 import circlebinder.common.table.SQLite;
@@ -78,7 +78,7 @@ public class ChecklistSelectorView extends FrameLayout {
             public void onItemClick(ChecklistColor item) {
                 updateChecklistColor(item, circle);
                 eventCircleTable.updateItem(new EventCircleTableForUpdate(circle.getId(), item));
-                getContext().sendBroadcast(BroadcastEvent.createIntent());
+                getContext().sendBroadcast(ReloadEventReceiverFactory.createBroadcastIntent());
                 selector.dismiss();
             }
         });
