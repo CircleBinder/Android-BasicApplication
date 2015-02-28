@@ -2,7 +2,6 @@ package net.ichigotake.common.rx;
 
 import java.util.concurrent.Callable;
 
-import circlebinder.creation.app.phone.Binder;
 import rx.Observable;
 
 public class ObservableBuilder<T> {

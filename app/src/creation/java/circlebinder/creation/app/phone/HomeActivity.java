@@ -13,15 +13,22 @@ import net.ichigotake.common.app.broadcast.ReloadEventReceiverFactory;
 import net.ichigotake.common.rx.ObservableBuilder;
 import net.ichigotake.common.util.ActivityViewFinder;
 import net.ichigotake.common.util.Finders;
-import net.ichigotake.common.util.Optional;
 
-import circlebinder.common.Legacy;
+import java.util.List;
 
 import net.ichigotake.common.rx.RxActionBarActivity;
 import circlebinder.R;
-import circlebinder.common.app.BroadcastEvent;
+import circlebinder.common.card.ChecklistCardRetriever;
+import circlebinder.common.card.HomeCard;
+import circlebinder.common.card.HomeCardAdapter;
+import circlebinder.common.table.SQLite;
 import circlebinder.creation.home.HomeCardListView;
 import circlebinder.creation.system.NavigationDrawerRenderer;
+import rx.Observable;
+import rx.android.lifecycle.LifecycleObservable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * 通常起動時のファーストビュー
@@ -37,8 +44,8 @@ public class HomeActivity extends RxActionBarActivity {
         };
     }
 
-    private HomeCardListView homeCardListView;
     private NavigationDrawerRenderer drawerRenderer;
+    private HomeCardAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,14 +54,29 @@ public class HomeActivity extends RxActionBarActivity {
         ActivityViewFinder finder = Finders.from(this);
         Toolbar toolbar = finder.findOrNull(R.id.creation_activity_home_toolbar);
         setSupportActionBar(toolbar);
+        
         drawerRenderer = new NavigationDrawerRenderer(
                 this,
                 toolbar,
                 finder.<DrawerLayout>findOrNull(R.id.creation_activity_home_container),
                 finder.findOrNull(R.id.creation_activity_home_system_menu)
         );
-        homeCardListView = finder.findOrNull(R.id.creation_activity_home_checklist_list);
-        broadcastReceiver = Optional.<BroadcastReceiver>of(new BroadcastReceiver() {
+        
+        HomeCardListView homeCardListView = finder.findOrNull(R.id.creation_activity_home_checklist_list);
+        adapter = new HomeCardAdapter(this);
+        homeCardListView.setAdapter(adapter);
+        
+        LifecycleObservable
+                .bindActivityLifecycle(lifecycle(), homeCardsObservable())
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<HomeCard>>() {
+                    @Override
+                    public void call(List<HomeCard> homeCards) {
+                        adapter.clear();
+                        adapter.addAll(homeCards);
+                    }
+                });
 
         registerReceiver(new ReloadEventReceiverFactory() {
             @Override
@@ -62,6 +84,17 @@ public class HomeActivity extends RxActionBarActivity {
                 reload();
             }
         });
+    }
+    
+    private void reload() {
+        lifecycle().repeat();
+    }
+    
+    private Observable<List<HomeCard>> homeCardsObservable() {
+        return ObservableBuilder
+                .from(new ChecklistCardRetriever(SQLite.getDatabase(this)))
+                .bind(adapter)
+                .create();
     }
 
     @Override

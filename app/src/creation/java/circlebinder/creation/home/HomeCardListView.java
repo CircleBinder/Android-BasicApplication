@@ -10,21 +10,24 @@ import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 
+import net.ichigotake.common.app.ActivityTripper;
 import net.ichigotake.common.util.Finders;
 import net.ichigotake.common.util.ViewFinder;
 
 import circlebinder.R;
+import circlebinder.common.app.phone.CircleSearchActivity;
 import circlebinder.common.card.HomeCard;
-import circlebinder.common.card.HomeCardPresenter;
+import circlebinder.common.card.HomeCardAdapter;
 
 public final class HomeCardListView extends FrameLayout {
 
-    private final HomeCardPresenter presenter;
-
+    private final HomeCardClickEventHandler navigator;
+    private GridView gridView;
+    
     @SuppressWarnings("unused") // Public API
     public HomeCardListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.presenter = new HomeCardPresenter(getContext());
+        this.navigator = new HomeCardClickEventHandler();
     }
 
     @Override
@@ -38,32 +41,39 @@ public final class HomeCardListView extends FrameLayout {
         headerView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                presenter.headerClicked();
+                navigator.headerClicked(getContext());
             }
         });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             headerView.setBackgroundResource(R.drawable.common_ripple);
             ViewCompat.setElevation(headerView, 10);
         }
-        GridView checklistsView = finder.findOrNull(R.id.creation_view_checklist_list);
-        checklistsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gridView = finder.findOrNull(R.id.creation_view_checklist_list);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                presenter.itemClicked((HomeCard) parent.getItemAtPosition(position));
+                navigator.itemClicked(getContext(), (HomeCard) parent.getItemAtPosition(position));
             }
         });
-        presenter.listViewAttached(checklistsView);
-        reload();
+    }
+    
+    public void setAdapter(HomeCardAdapter adapter) {
+        gridView.setAdapter(adapter);
     }
 
-    public void reload() {
-        presenter.reload();
-    }
+    private static class HomeCardClickEventHandler {
 
-    @Override
-    protected void onDetachedFromWindow() {
-        presenter.destroy();
-        super.onDetachedFromWindow();
+        void headerClicked(Context context) {
+            ActivityTripper
+                    .from(context, CircleSearchActivity.with())
+                    .trip();
+        }
+
+        void itemClicked(Context context, HomeCard item) {
+            ActivityTripper.from(context, item.createTransitIntentFactory(context))
+                    .trip();
+        }
+
     }
 
 }

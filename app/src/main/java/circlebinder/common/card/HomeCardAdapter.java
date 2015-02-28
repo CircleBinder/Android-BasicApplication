@@ -9,9 +9,13 @@ import android.view.ViewGroup;
 
 import net.ichigotake.common.widget.ArrayAdapter;
 
-import circlebinder.R;
+import java.util.List;
 
-public final class HomeCardAdapter extends ArrayAdapter<HomeCard, HomeCardItemViewHolder> {
+import circlebinder.R;
+import net.ichigotake.common.rx.Binder;
+
+public final class HomeCardAdapter extends ArrayAdapter<HomeCard, HomeCardItemViewHolder>
+        implements Binder<List<HomeCard>> {
 
     private final Resources resources;
 
@@ -46,4 +50,8 @@ public final class HomeCardAdapter extends ArrayAdapter<HomeCard, HomeCardItemVi
         return new HomeCardItemViewHolder(convertView);
     }
 
+    @Override
+    public void bind(List<HomeCard> item) {
+        addAll(item);
+    }
 }

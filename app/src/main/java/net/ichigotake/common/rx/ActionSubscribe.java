@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import circlebinder.creation.app.phone.Binder;
 import rx.Observable;
 import rx.Subscriber;
 
