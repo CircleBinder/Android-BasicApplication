@@ -9,19 +9,19 @@ import android.view.MenuItem;
 import net.ichigotake.common.app.ActivityNavigation;
 import net.ichigotake.common.content.OnAfterLoadingListener;
 import net.ichigotake.common.content.OnBeforeLoadingListener;
+import net.ichigotake.common.app.BaseActivity;
 import net.ichigotake.common.app.IntentFactory;
 import net.ichigotake.common.os.BundleMerger;
 import net.ichigotake.common.util.Finders;
 import net.ichigotake.common.view.MenuPresenter;
 import net.ichigotake.common.view.ReloadActionProvider;
 
-import net.ichigotake.common.rx.RxActionBarActivity;
 import circlebinder.R;
 import circlebinder.common.web.WebView;
 import circlebinder.common.web.WebViewClient;
 import progress.menu.item.ProgressMenuItemHelper;
 
-public final class WebViewActivity extends RxActionBarActivity {
+public final class WebViewActivity extends BaseActivity {
 
     private final static String KEY_URL = "url";
 

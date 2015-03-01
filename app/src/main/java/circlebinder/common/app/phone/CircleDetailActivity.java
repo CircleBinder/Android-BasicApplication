@@ -12,6 +12,7 @@ import com.dmitriy.tarasov.android.intents.IntentUtils;
 
 import net.ichigotake.common.app.ActivityNavigation;
 import net.ichigotake.common.app.ActivityTripper;
+import net.ichigotake.common.app.BaseActivity;
 import net.ichigotake.common.app.IntentFactory;
 import net.ichigotake.common.app.TextShareIntentFactory;
 import net.ichigotake.common.content.OnBeforeLoadingListener;
@@ -22,8 +23,7 @@ import net.ichigotake.common.view.ActionProvider;
 import net.ichigotake.common.view.MenuPresenter;
 import net.ichigotake.common.view.ReloadActionProvider;
 
-import circlebinder.common.Legacy;
-import net.ichigotake.common.rx.RxActionBarActivity;
+
 import circlebinder.common.checklist.ChecklistSelectActionProvider;
 import circlebinder.common.circle.CircleDetailHeaderView;
 import circlebinder.common.circle.CircleWebView;
@@ -40,7 +40,7 @@ import rx.android.observables.AndroidObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public final class CircleDetailActivity extends RxActionBarActivity implements Legacy {
+public final class CircleDetailActivity extends BaseActivity {
 
     private static final String EXTRA_KEY_SEARCH_OPTION = "search_option";
     private static final String EXTRA_KEY_POSITION = "position";

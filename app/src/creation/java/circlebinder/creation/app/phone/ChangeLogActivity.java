@@ -6,17 +6,17 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import net.ichigotake.common.app.ActivityNavigation;
+import net.ichigotake.common.app.BaseActivity;
 import net.ichigotake.common.app.IntentFactory;
 import net.ichigotake.common.util.Finders;
 
 import java.io.IOException;
 
-import net.ichigotake.common.rx.RxActionBarActivity;
 import circlebinder.R;
 import circlebinder.common.system.ChangeLogLoader;
 import circlebinder.common.system.ChangeLogView;
 
-public final class ChangeLogActivity extends RxActionBarActivity {
+public final class ChangeLogActivity extends BaseActivity {
 
     public static IntentFactory from() {
         return new IntentFactory() {

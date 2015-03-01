@@ -7,11 +7,12 @@ import android.view.MenuItem;
 
 import net.ichigotake.common.app.ActivityNavigation;
 
+import net.ichigotake.common.app.BaseActivity;
 import net.ichigotake.common.app.IntentFactory;
-import net.ichigotake.common.rx.RxActionBarActivity;
+
 import circlebinder.R;
 
-public final class ContactActivity extends RxActionBarActivity {
+public final class ContactActivity extends BaseActivity {
 
     public static IntentFactory from() {
         return new IntentFactory() {

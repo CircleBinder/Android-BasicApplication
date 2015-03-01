@@ -14,8 +14,8 @@ public final class FlowBundler {
 
     private Flow flow;
 
-    public FlowBundler(Object defaultScreen, Flow.Listener listener) {
-        this(defaultScreen, listener, new NoParameterParcer<>());
+    public FlowBundler(Flow.Listener flowListener, ScreenFlow screenFlow) {
+        this(screenFlow.createFirstScreen(), flowListener, new NoParameterParcer<>());
     }
 
     public FlowBundler(Object defaultScreen, Flow.Listener listener, Parcer<Object> parcer) {

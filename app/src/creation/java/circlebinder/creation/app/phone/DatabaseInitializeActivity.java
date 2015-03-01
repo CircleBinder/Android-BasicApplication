@@ -12,20 +12,18 @@ import android.os.RemoteException;
 import android.view.View;
 
 import net.ichigotake.common.app.ActivityTripper;
+import net.ichigotake.common.app.BaseActivity;
 import net.ichigotake.common.app.IntentFactory;
 import net.ichigotake.common.app.OnClickToTrip;
 import net.ichigotake.common.util.ActivityViewFinder;
 import net.ichigotake.common.util.Finders;
 
-import circlebinder.common.Legacy;
-import net.ichigotake.common.rx.RxActionBarActivity;
 import circlebinder.R;
 import circlebinder.creation.initialize.DatabaseInitializeService;
 import circlebinder.creation.initialize.IInitializeBindService;
 import circlebinder.creation.initialize.IInitializeServiceCallback;
 
-public final class DatabaseInitializeActivity extends RxActionBarActivity
-        implements Legacy {
+public final class DatabaseInitializeActivity extends BaseActivity {
 
     public static IntentFactory from() {
         return new IntentFactory() {

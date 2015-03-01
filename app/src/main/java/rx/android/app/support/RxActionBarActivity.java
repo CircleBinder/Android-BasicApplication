@@ -1,11 +1,8 @@
-package net.ichigotake.common.rx;
+package rx.android.app.support;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
-import net.ichigotake.common.app.broadcast.BroadcastLifecycle;
-
-import net.ichigotake.common.app.broadcast.BroadcastReceiverFactory;
 import rx.Observable;
 import rx.android.lifecycle.LifecycleEvent;
 import rx.subjects.BehaviorSubject;
@@ -13,21 +10,15 @@ import rx.subjects.BehaviorSubject;
 public abstract class RxActionBarActivity extends ActionBarActivity {
 
     private final BehaviorSubject<LifecycleEvent> lifecycleSubject = BehaviorSubject.create();
-    private final BroadcastLifecycle broadcastLifecycle = new BroadcastLifecycle();
 
     public Observable<LifecycleEvent> lifecycle() {
         return lifecycleSubject.asObservable();
     }
     
-    public void registerReceiver(BroadcastReceiverFactory broadcastReceiverFactory) {
-        broadcastLifecycle.registerReceiver(broadcastReceiverFactory);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         lifecycleSubject.onNext(LifecycleEvent.CREATE);
-        broadcastLifecycle.onCreate(this);
     }
 
     @Override
@@ -56,7 +47,6 @@ public abstract class RxActionBarActivity extends ActionBarActivity {
 
     @Override
     protected void onDestroy() {
-        broadcastLifecycle.onDestroy();
         lifecycleSubject.onNext(LifecycleEvent.DESTROY);
         super.onDestroy();
     }

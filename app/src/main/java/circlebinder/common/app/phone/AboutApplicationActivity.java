@@ -6,21 +6,15 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import net.ichigotake.common.app.ActivityNavigation;
+import net.ichigotake.common.app.BaseActivity;
 import net.ichigotake.common.app.IntentFactory;
-import net.ichigotake.common.util.Finders;
 
-import net.ichigotake.common.rx.RxActionBarActivity;
-import circlebinder.R;
-import circlebinder.common.flow.AppFlow;
-import circlebinder.common.flow.FlowBundler;
-import circlebinder.common.flow.FrameScreenSwitcherView;
-import circlebinder.common.flow.HasFlow;
-import circlebinder.common.flow.HasTitle;
+import circlebinder.common.flow.ScreenFlow;
 import circlebinder.common.flow.Screen;
 import flow.Backstack;
 import flow.Flow;
 
-public final class AboutApplicationActivity extends RxActionBarActivity implements HasFlow {
+public final class AboutApplicationActivity extends BaseActivity {
 
     public static IntentFactory from() {
         return new IntentFactory() {

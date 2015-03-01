@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
 import net.ichigotake.common.app.ActivityNavigation;
+import net.ichigotake.common.app.BaseActivity;
 import net.ichigotake.common.app.IntentFactory;
 import net.ichigotake.common.app.broadcast.ReloadEventReceiverFactory;
 import net.ichigotake.common.os.BundleMerger;
@@ -21,7 +22,7 @@ import circlebinder.common.search.CircleSearchOption;
 import circlebinder.common.search.CircleSearchOptionBuilder;
 import circlebinder.common.search.CircleSearchView;
 
-public final class ChecklistActivity extends RxActionBarActivity {
+public final class ChecklistActivity extends BaseActivity {
 
     private static final String KEY_CHECKLIST_COLOR = "checklist_color";
 

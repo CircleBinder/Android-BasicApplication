@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import net.ichigotake.common.app.ActivityNavigation;
+import net.ichigotake.common.app.BaseActivity;
 import net.ichigotake.common.app.IntentFactory;
 import net.ichigotake.common.util.ActivityViewFinder;
 import net.ichigotake.common.util.Finders;
@@ -21,7 +22,6 @@ import net.ichigotake.common.view.MenuPresenter;
 import net.ichigotake.common.widget.OnItemSelectedEventListener;
 
 import circlebinder.common.app.BroadcastEvent;
-import net.ichigotake.common.rx.RxActionBarActivity;
 import circlebinder.common.checklist.EventBlockSelectorView;
 import circlebinder.common.event.Block;
 import circlebinder.common.search.CircleSearchOption;
@@ -34,7 +34,7 @@ import circlebinder.common.search.SearchFormStore;
 import circlebinder.common.table.EventBlockTable;
 import circlebinder.common.table.SQLite;
 
-public final class CircleSearchActivity extends RxActionBarActivity {
+public final class CircleSearchActivity extends BaseActivity {
 
     public static IntentFactory with() {
         return new IntentFactory() {

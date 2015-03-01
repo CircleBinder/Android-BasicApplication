@@ -4,12 +4,13 @@ import android.os.Bundle;
 
 import net.ichigotake.common.app.ActivityTripper;
 
+import net.ichigotake.common.app.BaseActivity;
 import net.ichigotake.common.app.IntentFactory;
-import net.ichigotake.common.rx.RxActionBarActivity;
+
 import circlebinder.creation.initialize.LegacyAppStorage;
 import circlebinder.creation.initialize.LegacyStorageSweeper;
 
-public final class LauncherActivity extends RxActionBarActivity {
+public final class LauncherActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

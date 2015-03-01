@@ -8,6 +8,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import net.ichigotake.common.app.BaseActivity;
 import net.ichigotake.common.app.IntentFactory;
 import net.ichigotake.common.app.broadcast.ReloadEventReceiverFactory;
 import net.ichigotake.common.rx.ObservableBuilder;
@@ -16,7 +17,6 @@ import net.ichigotake.common.util.Finders;
 
 import java.util.List;
 
-import net.ichigotake.common.rx.RxActionBarActivity;
 import circlebinder.R;
 import circlebinder.common.card.ChecklistCardRetriever;
 import circlebinder.common.card.HomeCard;
@@ -33,7 +33,7 @@ import rx.schedulers.Schedulers;
 /**
  * 通常起動時のファーストビュー
  */
-public class HomeActivity extends RxActionBarActivity {
+public class HomeActivity extends BaseActivity {
 
     public static IntentFactory from() {
         return new IntentFactory() {
