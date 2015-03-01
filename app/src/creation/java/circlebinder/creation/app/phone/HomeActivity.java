@@ -94,7 +94,7 @@ public class HomeActivity extends BaseActivity {
         return ObservableBuilder
                 .from(new ChecklistCardRetriever(SQLite.getDatabase(this)))
                 .bind(adapter)
-                .create();
+                .createObservable();
     }
 
     @Override

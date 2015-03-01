@@ -2,45 +2,49 @@ package circlebinder.common.app.phone;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.dmitriy.tarasov.android.intents.IntentUtils;
 
 import net.ichigotake.common.app.ActivityNavigation;
 import net.ichigotake.common.app.ActivityTripper;
 import net.ichigotake.common.app.BaseActivity;
 import net.ichigotake.common.app.IntentFactory;
+import net.ichigotake.common.app.OpenLinkIntentFactory;
 import net.ichigotake.common.app.TextShareIntentFactory;
 import net.ichigotake.common.content.OnBeforeLoadingListener;
 import net.ichigotake.common.os.BundleMerger;
+import net.ichigotake.common.rx.Binder;
+import net.ichigotake.common.rx.ObservableBuilder;
 import net.ichigotake.common.util.Finders;
-import net.ichigotake.common.util.Optional;
 import net.ichigotake.common.view.ActionProvider;
 import net.ichigotake.common.view.MenuPresenter;
 import net.ichigotake.common.view.ReloadActionProvider;
 
+import java.util.concurrent.Callable;
 
 import circlebinder.common.checklist.ChecklistSelectActionProvider;
 import circlebinder.common.circle.CircleDetailHeaderView;
 import circlebinder.common.circle.CircleWebView;
 import circlebinder.common.event.Circle;
+import circlebinder.common.flow.Screen;
+import circlebinder.common.flow.ScreenFlow;
 import circlebinder.common.search.CircleSearchOption;
 import circlebinder.R;
 import circlebinder.common.table.EventCircleTable;
 import circlebinder.common.table.SQLite;
 import circlebinder.common.web.WebViewClient;
+import flow.Backstack;
+import flow.Flow;
+import flow.Layout;
 import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.android.observables.AndroidObservable;
+import rx.android.lifecycle.LifecycleObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public final class CircleDetailActivity extends BaseActivity {
+public final class CircleDetailActivity extends BaseActivity implements Binder<Circle> {
 
     private static final String EXTRA_KEY_SEARCH_OPTION = "search_option";
     private static final String EXTRA_KEY_POSITION = "position";
@@ -67,13 +71,32 @@ public final class CircleDetailActivity extends BaseActivity {
     private Circle circle;
 
     @Override
+    protected ScreenFlow createScreenFlow() {
+        return new ScreenFlow() {
+            @Override
+            public Screen createFirstScreen() {
+                return new CircleDetailScreen();
+            }
+
+            @Override
+            public void onAfterGoing(Backstack nextBackstack, Flow.Direction direction, Flow.Callback callback) {
+
+            }
+        };
+    }
+
+    @Layout(R.layout.common_activity_circle_detail)
+    private static class CircleDetailScreen extends Screen {
+
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
-        setContentView(R.layout.common_activity_circle_detail);
 
         actionBarHeaderView = new CircleDetailHeaderView(this);
         actionBar.setCustomView(actionBarHeaderView);
@@ -93,38 +116,24 @@ public final class CircleDetailActivity extends BaseActivity {
         });
         webView.setWebViewClient(client);
 
-        AndroidObservable.bindActivity(this, Observable.create(new Observable.OnSubscribe<Circle>() {
-            @Override
-            public void call(Subscriber<? super Circle> subscriber) {
-                Optional<Circle> circle = new EventCircleTable(SQLite.getDatabase(getApplicationContext()))
-                        .findOne(searchOption);
-                if (circle.isPresent()) {
-                    subscriber.onNext(circle.get());
-                } else {
-                    subscriber.onError(new IllegalStateException());
-                }
-            }
-        }))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.newThread())
-                .subscribe(new Observer<Circle>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+        LifecycleObservable.bindActivityLifecycle(lifecycle(), createObservable());
+    }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d("CircleDetail", "", e);
-                    }
+    @Override
+    public void bind(Circle item) {
+        this.circle = item;
+        this.actionBarHeaderView.setCircle(circle);
+        invalidateOptionsMenu();
+    }
 
-                    @Override
-                    public void onNext(Circle circle) {
-                        Log.d("CircleDetail", "cirlce " + circle.getName());
-                        CircleDetailActivity.this.circle = circle;
-                        webView.setCircle(circle);
-                        postEvent();
-                    }
-                });
+    private Observable<Circle> createObservable() {
+        return ObservableBuilder
+                .from(new CircleSearcher(SQLite.getDatabase(this), searchOption))
+                .bind(this)
+                .bind(webView)
+                .createObservable()
+                .observeOn(Schedulers.newThread())
+                .subscribeOn(AndroidSchedulers.mainThread());
     }
 
     @Override
@@ -144,7 +153,7 @@ public final class CircleDetailActivity extends BaseActivity {
         presenter.setActionProvider(openBrowserItem, new ActionProvider(this, new ActionProvider.OnClickListener() {
             @Override
             public void onClick() {
-                new ActivityTripper(getApplicationContext(), IntentUtils.openLink(currentUrl)).trip();
+                ActivityTripper.from(getApplicationContext(), new OpenLinkIntentFactory(currentUrl)).trip();
             }
         }));
         presenter.setShowAsAction(openBrowserItem, MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
@@ -174,13 +183,23 @@ public final class CircleDetailActivity extends BaseActivity {
         outState.putInt(EXTRA_KEY_POSITION, currentPosition);
     }
 
-    private void onCirclePageChanged(Circle circle) {
-        this.actionBarHeaderView.setCircle(circle);
-        invalidateOptionsMenu();
-    }
+    private static class CircleSearcher implements Callable<Circle> {
 
-    private void postEvent() {
-        onCirclePageChanged(circle);
+        private final EventCircleTable eventCircleTable;
+        private final CircleSearchOption searchOption;
+
+        private CircleSearcher(SQLiteDatabase database, CircleSearchOption searchOption) {
+            this.eventCircleTable = new EventCircleTable(database);
+            this.searchOption = searchOption;
+        }
+
+        @Override
+        public Circle call() throws Exception {
+            for (Circle circle : eventCircleTable.findOne(searchOption).asSet()) {
+                return circle;
+            }
+            throw new IllegalStateException();
+        }
     }
 
 }

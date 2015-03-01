@@ -21,7 +21,7 @@ public class ObservableBuilder<T> {
         return this;
     }
 
-    public Observable<T> create() {
+    public Observable<T> createObservable() {
         return Observable.create(subscribe);
     }
 

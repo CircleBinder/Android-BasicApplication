@@ -10,6 +10,7 @@ import net.ichigotake.common.app.ActivityTripper;
 import circlebinder.common.app.phone.CircleDetailActivity;
 import circlebinder.common.circle.CircleAdapter;
 import circlebinder.common.event.BlockBuilder;
+import circlebinder.common.table.SQLite;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 final class CircleSearchPresenter {
