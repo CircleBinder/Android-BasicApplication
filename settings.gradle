@@ -1,1 +1,0 @@
-include ':app', ':vendor:android-sqlite-helper:sqlitehelper'
