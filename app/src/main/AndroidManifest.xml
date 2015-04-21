@@ -1,53 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="circlebinder"
-    >
+    package="circlebinder.android.app" >
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/common_app_name"
-        >
-
-        <meta-data android:name="AA_DB_NAME" android:value="Creation.db" />
-        <meta-data android:name="AA_DB_VERSION" android:value="12" />
-
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
         <activity
-            android:name="circlebinder.common.app.phone.CircleSearchActivity"
-            android:label="@string/common_circle_search"
-            android:configChanges="orientation|screenSize"
-            />
+            android:name=".MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-        <activity
-            android:name="circlebinder.common.app.phone.ChecklistActivity"
-            android:label="@string/app_label_empty"
-            android:configChanges="orientation|screenSize"
-            />
-
-        <activity
-            android:name=".common.app.phone.AboutApplicationActivity"
-            android:label="@string/common_about"
-            android:configChanges="orientation|screenSize"
-            />
-
-        <activity
-            android:name="circlebinder.common.app.phone.CircleDetailActivity"
-            android:label="@string/app_label_empty"
-            android:configChanges="orientation|screenSize"
-            />
-
-        <activity
-            android:name="circlebinder.common.app.phone.WebViewActivity"
-            android:label="@string/app_event_name"
-            android:configChanges="orientation|screenSize"
-            />
-
-        <activity
-            android:name="circlebinder.common.app.phone.ContactActivity"
-            android:label="@string/common_send_feedback"
-            android:configChanges="orientation|screenSize"
-            />
-
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

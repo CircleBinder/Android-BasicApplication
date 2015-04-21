@@ -1,28 +1,33 @@
-CircleBinder
-============
+# CircleBinder for Android [![Circle CI](https://circleci.com/gh/CircleBinder/Android-Application.svg?style=svg)](https://circleci.com/gh/CircleBinder/Android-Application)
 
-同人イベントのチェックリストを作成するAndroidアプリ
+## Libraries Used
 
+- Application
+    - Butter Knife
+    - RxAndroid
+- Testing
+    - Espresso
+    - Robolectric
 
-公開中のアプリ
-------------
+## Build
 
-[![Android app on Google Play](/art/banner_play_store.png)](https://play.google.com/store/search?q=pub:ichigotake)
+In your local machine:
 
-**当プロジェクトは各種イベントの非公式アプリです。**
+``` sh
+# make and apk and install it to the connected device
+./gradlew installDebug
+```
 
-当アプリに関するお問い合わせは各種イベントへ送らないようお願い致します。
+To test it with Docker (what circleci.yml does):
 
+``` sh
+docker build -t circlebinder/android-application .
+docker run -it circlebinder/android-application
+```
 
-開発環境
-------------
+## License
 
-- AndroidStudio 1.+
-- JDK 7
+This application is free software; you can redistribute it and/or modify it under the ters of the Apache License 2.0.
 
+- http://www.apache.org/licenses/LICENSE-2.0
 
-関連リンク
-------------
-
-- [CircleBinder 公式ブログ](http://circlebinder.blog.jp/)
-- [CircleBinder/CircleBinder](https://github.com/CircleBinder/CircleBinder)
